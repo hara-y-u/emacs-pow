@@ -153,10 +153,10 @@
                     ) symlinks))))
 
 (defun pow-app-load-for-project (project-dir)
-  (car (remove-if #'(lambda (app)
-                      (not (pow-same-file-p
-                            (pow-app-path app) project-dir)))
-                  (pow-app-load-all))))
+  (remove-if #'(lambda (app)
+                 (not (pow-same-file-p
+                       (pow-app-path app) project-dir)))
+             (pow-app-load-all)))
 
 (defun pow-app-load-for-dir (dir)
   (let ((project-path (pow-rack-project-root-for-dir dir)))
@@ -166,39 +166,78 @@
 
 
 ;;
-;; user function (TODO)
+;; user function
 ;;
 
-;; (defmacro pow-with-current-app (app &rest body)
-;;   (declare (indent 1))
-;;   `(let ((,app (pow-app-load-for-dir default-directory)))
-;;      (if ,app
-;;          (progn ,@body)
-;;        (message "Pow: App for current project was not found."))))
+(defmacro pow-with-rack-project-root (root-path &rest body)
+  (declare (indent 1))
+  `(let ((,root-path (pow-rack-project-root-for-dir default-directory)))
+     (if ,root-path
+         (progn ,@body)
+       (message "Pow: Not in rack project."))))
 
-;; (defun pow-open-app ()
-;;   (interactive)
-;;   (pow-with-current-app app (pow-app-open app)))
+(defun pow-register-project (&optional name)
+  (interactive)
+  (pow-with-rack-project-root path
+    (let* ((app (make-pow-app :path path))
+           (appname (pow-app-name app)))
+      (if (null name)
+          (setq name (read-string (format "App Name(%s): " appname)
+                                  nil nil appname)))
+      (setf (pow-app-name app) name)
+      (condition-case err
+          (progn
+            (pow-app-save app)
+            (message (format "Pow: App \"%s\" is registered." name)))
+        (file-already-exists
+         (message (format "Pow: App \"%s\" is already registered." name)))))))
 
-;; (defun pow-register-app (&optional name)
-;;   (interactive)
-;;   (pow-with-current-app app
-;;     (if (nil app)
-;;         (let ((app (make-pow-app :path (pow-rack-project-root-for-dir default-directory)
-;;                                  :name name)))
-;;           (pow-app-save app))
-;;       (message "Pow: App is already registered."))))
+(defmacro pow-with-current-apps (apps &rest body)
+  (declare (indent 1))
+  `(let ((,apps (pow-app-load-for-dir default-directory)))
+     (if (not (null ,apps))
+         (progn ,@body)
+       (message "Pow: App for current project was not found."))))
 
-;; (defun pow-unregister-app ()
-;;   (interactive)
-;;   (pow-with-current-app app (pow-app-delete app)))
+(defmacro pow-with-current-app (app &rest body)
+  (declare (indent 1))
+  `(pow-with-current-apps apps
+     (let* ((name
+             (completing-read (format "App Name(%s): " (pow-app-name (car apps)))
+                              (mapcar #'(lambda (-app) (pow-app-name -app)) apps)
+                              nil nil nil))
+            (,app
+             (car (remove-if
+                   #'(lambda (--app)
+                       (not
+                        (equal (pow-app-name --app) name)))
+                   apps))))
+       (if (not (null ,app))
+           (progn ,@body)
+         (message (format "Pow: App \"%s\" is not found." name))))))
 
+(defun pow-unregister-project ()
+  (interactive)
+  (pow-with-current-app app
+    (let ((appname (pow-app-name app)))
+      (condition-case err
+          (progn
+            (pow-app-delete app)
+            (message (format "Pow: App \"%s\" is unregistered." appname)))
+        (file-error
+         (message (format "Pow: App \"%s\" couldn't be unregistered." appname)))))))
+
+;; TODO:
 ;; (defun pow-register-app-as-default ()
 ;;   (interactive)
 ;;   (pow-with-current-app app
 ;;     (pow-app-delete app)
 ;;     (pow-app-set-name-default app)
 ;;     (pow-app-save app)))
+
+;; (defun pow-open-app ()
+;;   (interactive)
+;;   (pow-with-current-app app (pow-app-open app)))
 
 ;; (defun pow-restart-app ()
 ;;   (interactive)
