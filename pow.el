@@ -194,6 +194,10 @@
         (file-already-exists
          (pow-message "App \"%s\" is already registered.." name))))))
 
+(defun pow-register-app-as-default ()
+  (interactive)
+  (pow-register-project "default"))
+
 (defmacro pow-with-current-apps (apps &rest body)
   (declare (indent 1))
   `(let ((,apps (pow-app-load-for-dir default-directory)))
@@ -229,13 +233,6 @@
         (file-error
          (pow-message "App \"%s\" couldn't be unregistered." appname))))))
 
-;; TODO:
-;; (defun pow-register-app-as-default ()
-;;   (interactive)
-;;   (pow-with-current-app app
-;;     (pow-app-delete app)
-;;     (pow-app-set-name-default app)
-;;     (pow-app-save app)))
 
 ;; (defun pow-open-app ()
 ;;   (interactive)
