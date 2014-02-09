@@ -76,6 +76,8 @@
                       (replace-regexp-in-string "/$" "" path)) paths)
           :start 0))
 
+(defun pow-message (format-string &rest args)
+  (message (apply 'format (concat "Pow: " format-string) args)))
 
 
 ;;
@@ -174,7 +176,7 @@
   `(let ((,root-path (pow-rack-project-root-for-dir default-directory)))
      (if ,root-path
          (progn ,@body)
-       (message "Pow: Not in rack project."))))
+       (pow-message "Not in rack project.."))))
 
 (defun pow-register-project (&optional name)
   (interactive)
@@ -188,16 +190,16 @@
       (condition-case err
           (progn
             (pow-app-save app)
-            (message (format "Pow: App \"%s\" is registered." name)))
+            (pow-message "Registered app \"%s\"." name))
         (file-already-exists
-         (message (format "Pow: App \"%s\" is already registered." name)))))))
+         (pow-message "App \"%s\" is already registered.." name))))))
 
 (defmacro pow-with-current-apps (apps &rest body)
   (declare (indent 1))
   `(let ((,apps (pow-app-load-for-dir default-directory)))
      (if (not (null ,apps))
          (progn ,@body)
-       (message "Pow: App for current project was not found."))))
+       (pow-message "App for current project was not found.."))))
 
 (defmacro pow-with-current-app (app &rest body)
   (declare (indent 1))
@@ -214,7 +216,7 @@
                    apps))))
        (if (not (null ,app))
            (progn ,@body)
-         (message (format "Pow: App \"%s\" is not found." name))))))
+         (pow-message "App \"%s\" is not found.." name)))))
 
 (defun pow-unregister-project ()
   (interactive)
@@ -223,9 +225,9 @@
       (condition-case err
           (progn
             (pow-app-delete app)
-            (message (format "Pow: App \"%s\" is unregistered." appname)))
+            (pow-message "Unregistered app \"%s\"." appname))
         (file-error
-         (message (format "Pow: App \"%s\" couldn't be unregistered." appname)))))))
+         (pow-message "App \"%s\" couldn't be unregistered." appname))))))
 
 ;; TODO:
 ;; (defun pow-register-app-as-default ()
@@ -243,6 +245,6 @@
 ;;   (interactive)
 ;;   (pow-with-current-app app
 ;;     (pow-app-restart app)
-;;     (message "Pow: App will restart on next request.")))
+;;     (message "App will restart on next request.")))
 
 (provide 'pow)
