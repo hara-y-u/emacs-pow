@@ -208,19 +208,22 @@
 (defmacro pow-with-current-app (app &rest body)
   (declare (indent 1))
   `(pow-with-current-apps apps
-     (let* ((names (mapcar #'(lambda (-app) (pow-app-name -app)) apps))
-            (name
-             (completing-read (format "App Name(%s):" (car names))
-                              names nil t nil nil (car names)))
-            (,app
-             (car (remove-if
-                   #'(lambda (--app)
-                       (not
-                        (equal (pow-app-name --app) name)))
-                   apps))))
-       (if (not (null ,app))
-           (progn ,@body)
-         (pow-message "App \"%s\" is not found.." name)))))
+     (if (eq (length apps) 1)
+         (let ((,app (car apps)))
+           (progn ,@body))
+       (let* ((names (mapcar #'(lambda (-app) (pow-app-name -app)) apps))
+              (name
+               (completing-read (format "App Name(%s):" (car names))
+                                names nil t nil nil (car names)))
+              (,app
+               (car (remove-if
+                     #'(lambda (--app)
+                         (not
+                          (equal (pow-app-name --app) name)))
+                     apps))))
+         (if (not (null ,app))
+             (progn ,@body)
+           (pow-message "App \"%s\" is not found.." name))))))
 
 (defun pow-unregister-project ()
   (interactive)
@@ -233,10 +236,9 @@
         (file-error
          (pow-message "App \"%s\" couldn't be unregistered." appname))))))
 
-
-;; (defun pow-open-app ()
-;;   (interactive)
-;;   (pow-with-current-app app (pow-app-open app)))
+(defun pow-open-app ()
+  (interactive)
+  (pow-with-current-app app (pow-app-open app)))
 
 ;; (defun pow-restart-app ()
 ;;   (interactive)
