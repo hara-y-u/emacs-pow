@@ -182,7 +182,7 @@
     (let* ((app (make-pow-app :path path))
            (appname (pow-app-name app)))
       (if (null name)
-          (setq name (read-string (format "App Name(%s): " appname)
+          (setq name (read-string (format "App Name(%s):" appname)
                                   nil nil appname)))
       (setf (pow-app-name app) name)
       (condition-case err
@@ -202,10 +202,10 @@
 (defmacro pow-with-current-app (app &rest body)
   (declare (indent 1))
   `(pow-with-current-apps apps
-     (let* ((name
-             (completing-read (format "App Name(%s): " (pow-app-name (car apps)))
-                              (mapcar #'(lambda (-app) (pow-app-name -app)) apps)
-                              nil nil nil))
+     (let* ((names (mapcar #'(lambda (-app) (pow-app-name -app)) apps))
+            (name
+             (completing-read (format "App Name(%s):" (car names))
+                              names nil t nil nil (car names)))
             (,app
              (car (remove-if
                    #'(lambda (--app)
