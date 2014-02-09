@@ -240,10 +240,11 @@
   (interactive)
   (pow-with-current-app app (pow-app-open app)))
 
-;; (defun pow-restart-app ()
-;;   (interactive)
-;;   (pow-with-current-app app
-;;     (pow-app-restart app)
-;;     (message "App will restart on next request.")))
+(defun pow-restart-app ()
+  (interactive)
+  (pow-with-current-app app
+    (pow-app-restart app)
+    (pow-message "App \"%s\" will restart on next request."
+                 (pow-app-name app))))
 
 (provide 'pow)
