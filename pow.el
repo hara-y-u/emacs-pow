@@ -3,7 +3,7 @@
 ;; Copyright (c) 2013  Free Software Foundation, Inc.
 
 ;; Author: yukihiro hara <yukihr@gmail.com>
-;; URL: http://github.com/yukihr/pow-emacs
+;; URL: http://github.com/yukihr/emacs-pow
 ;; Keywords: develop, web, pow
 ;; Version: 0.0.1
 
