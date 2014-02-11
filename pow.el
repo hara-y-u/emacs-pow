@@ -261,6 +261,7 @@
          (progn ,@body)
        (pow-message "Not in rack project"))))
 
+;;;###autoload
 (defun pow-register-current-app (&optional name)
   (interactive)
   (pow-with-rack-project-root path
@@ -275,6 +276,7 @@
             (pow-message "Registered app \"%s\"" name))
         (error (pow-message (cdr err)))))))
 
+;;;###autoload
 (defun pow-register-current-app-as-default ()
   (interactive)
   (pow-register-current-app "default"))
@@ -306,6 +308,7 @@
              (progn ,@body)
            (pow-message "App \"%s\" is not found" name))))))
 
+;;;###autoload
 (defun pow-unregister-current-app ()
   (interactive)
   (pow-with-current-app app
@@ -315,10 +318,12 @@
           (pow-message "Unregistered app \"%s\"" (pow-app-name app)))
       (error (pow-message (cdr err))))))
 
+;;;###autoload
 (defun pow-open-current-app ()
   (interactive)
   (pow-with-current-app app (pow-open-app app)))
 
+;;;###autoload
 (defun pow-restart-current-app ()
   (interactive)
   (pow-with-current-app app
