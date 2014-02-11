@@ -322,8 +322,11 @@
 (defun pow-restart-current-app ()
   (interactive)
   (pow-with-current-app app
-    (pow-restart-app app)
-    (pow-message "App \"%s\" will restart on next request"
-                 (pow-app-name app))))
+    (condition-case err
+        (progn
+          (pow-restart-app app)
+          (pow-message "App \"%s\" will restart on next request"
+                       (pow-app-name app)))
+      (error (pow-message (cdr err))))))
 
 (provide 'pow)
