@@ -79,6 +79,11 @@
 (defun pow-message (format-string &rest args)
   (message (apply 'format (concat "Pow: " format-string) args)))
 
+(defun pow-filename-last-directory (path)
+  (string-match "\\/\\([^\\/]+\\)\\/?$" path)
+  (match-string 1 path))
+
+
 
 ;;
 ;; App
@@ -105,10 +110,7 @@
 
 (defun pow-app-set-name-with-path (app)
   (let* ((path (pow-app-path app))
-         (name
-          (progn
-            (string-match "\\/\\([^\\/]+\\)\\/?$" path)
-            (match-string 1 path))))
+         (name (pow-filename-last-directory path)))
     (setf (pow-app-name app) name)))
 
 (defun pow-app-set-name-default (app)
@@ -165,11 +167,64 @@
     (when project-path
       (pow-app-load-for-project project-path))))
 
+(defun pow-app-load-by-name (name)
+  (car
+   (remove-if #'(lambda (app)
+                  (not (equal name (pow-app-name app))))
+              (pow-app-load-all))))
+
 
 
 ;;
 ;; user function
 ;;
+
+;; core function
+
+(defun pow-register-app (name path)
+  (let ((app (make-pow-app :path path :name name)))
+    (condition-case err
+        (progn
+          (pow-app-save app)
+          (pow-message "Registered app \"%s\"." name))
+      (file-already-exists
+       (pow-message "App \"%s\" is already registered.." name)))
+    app))
+
+(defmacro pow--with-name-or-app (name-or-app app &rest body)
+  (declare (indent 2))
+  `(let (,app)
+     (if (pow-app-p ,name-or-app)
+         (setq ,app ,name-or-app)
+       (setq ,app (pow-app-load-by-name ,name-or-app)))
+     (if (null ,app)
+         (pow-message "App \"%s\ is not found.." (pow-app-name ,app))
+       (progn ,@body))))
+
+(defun pow--unregister-app (app)
+  (condition-case err
+      (progn
+        (pow-app-delete app)
+        (pow-message "Unregistered app \"%s\"." (pow-app-name app)))
+    (file-error
+     (pow-message "App \"%s\" couldn't be unregistered." (pow-app-name app)))))
+
+(defun pow-unregister-app (name-or-app)
+  (pow--with-name-or-app name-or-app app
+    (pow--unregister-app app)))
+
+(defun pow-open-app (name-or-app)
+  (pow--with-name-or-app name-or-app app
+    (pow-app-open app)))
+
+(defun pow-restart-app (name-or-app)
+  (pow--with-name-or-app name-or-app app
+    (pow-app-restart app)
+    (pow-message "App \"%s\" will restart on next request."
+                 (pow-app-name app))))
+
+
+;; interactive function
 
 (defmacro pow-with-rack-project-root (root-path &rest body)
   (declare (indent 1))
@@ -178,25 +233,19 @@
          (progn ,@body)
        (pow-message "Not in rack project.."))))
 
-(defun pow-register-project (&optional name)
+(defun pow-register-current-app (&optional name)
   (interactive)
   (pow-with-rack-project-root path
-    (let* ((app (make-pow-app :path path))
-           (appname (pow-app-name app)))
+    (let (app
+          (appname (pow-filename-last-directory path)))
       (if (null name)
           (setq name (read-string (format "App Name(%s):" appname)
                                   nil nil appname)))
-      (setf (pow-app-name app) name)
-      (condition-case err
-          (progn
-            (pow-app-save app)
-            (pow-message "Registered app \"%s\"." name))
-        (file-already-exists
-         (pow-message "App \"%s\" is already registered.." name))))))
+      (pow-register-app name path))))
 
-(defun pow-register-app-as-default ()
+(defun pow-register-current-app-as-default ()
   (interactive)
-  (pow-register-project "default"))
+  (pow-register-current-app "default"))
 
 (defmacro pow-with-current-apps (apps &rest body)
   (declare (indent 1))
@@ -225,26 +274,16 @@
              (progn ,@body)
            (pow-message "App \"%s\" is not found.." name))))))
 
-(defun pow-unregister-project ()
+(defun pow-unregister-current-app ()
   (interactive)
-  (pow-with-current-app app
-    (let ((appname (pow-app-name app)))
-      (condition-case err
-          (progn
-            (pow-app-delete app)
-            (pow-message "Unregistered app \"%s\"." appname))
-        (file-error
-         (pow-message "App \"%s\" couldn't be unregistered." appname))))))
+  (pow-with-current-app app (pow-unregister-app app)))
 
-(defun pow-open-app ()
+(defun pow-open-current-app ()
   (interactive)
-  (pow-with-current-app app (pow-app-open app)))
+  (pow-with-current-app app (pow-open-app app)))
 
-(defun pow-restart-app ()
+(defun pow-restart-current-app ()
   (interactive)
-  (pow-with-current-app app
-    (pow-app-restart app)
-    (pow-message "App \"%s\" will restart on next request."
-                 (pow-app-name app))))
+  (pow-with-current-app app (pow-restart-app app)))
 
 (provide 'pow)
