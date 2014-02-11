@@ -254,6 +254,15 @@
 
 ;; interactive function
 
+(defmacro pow-wrap-error-in-message (message-on-success &rest body)
+  (declare (indent 1))
+  `(condition-case err
+       (progn
+         ,@body
+         (unless (null ,message-on-success)
+           (pow-message ,message-on-success)))
+     (error (pow-message (cdr err)))))
+
 (defmacro pow-with-rack-project-root (root-path &rest body)
   (declare (indent 1))
   `(let ((,root-path (pow-rack-project-root-for-dir default-directory)))
@@ -270,11 +279,9 @@
       (when (null name)
           (setq name (read-string (format "App Name(%s):" appname)
                                   nil nil appname)))
-      (condition-case err
-          (progn
-            (pow-register-app name path)
-            (pow-message "Registered app \"%s\"" name))
-        (error (pow-message (cdr err)))))))
+      (pow-wrap-error-in-message
+          (format "Registered app \"%s\"" name)
+        (pow-register-app name path)))))
 
 ;;;###autoload
 (defun pow-register-current-app-as-default ()
@@ -312,11 +319,9 @@
 (defun pow-unregister-current-app ()
   (interactive)
   (pow-with-current-app app
-    (condition-case err
-        (progn
-          (pow-unregister-app app)
-          (pow-message "Unregistered app \"%s\"" (pow-app-name app)))
-      (error (pow-message (cdr err))))))
+    (pow-wrap-error-in-message
+        (format "Unregistered app \"%s\"" (pow-app-name app))
+      (pow-unregister-app app))))
 
 ;;;###autoload
 (defun pow-open-current-app ()
@@ -327,11 +332,8 @@
 (defun pow-restart-current-app ()
   (interactive)
   (pow-with-current-app app
-    (condition-case err
-        (progn
-          (pow-restart-app app)
-          (pow-message "App \"%s\" will restart on next request"
-                       (pow-app-name app)))
-      (error (pow-message (cdr err))))))
+    (pow-wrap-error-in-message
+        (format "App \"%s\" will restart on next request" (pow-app-name app))
+      (pow-restart-app app))))
 
 (provide 'pow)
