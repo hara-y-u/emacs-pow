@@ -231,9 +231,9 @@
   (declare (indent 2))
   `(let (,app name)
      (if (pow-app-p ,name-or-app)
-         (setq ,app ,name-or-app)
-       (setq ,app (pow-app-load-by-name ,name-or-app)))
-     (setq name (pow-app-name ,app))
+         (setq ,app ,name-or-app name (pow-app-name ,name-or-app))
+       (setq ,app (pow-app-load-by-name ,name-or-app)
+             name ,name-or-app))
      (if (null ,app)
          (signal 'pow-app-not-found
                  (format "App \"%s\" not found" name))
