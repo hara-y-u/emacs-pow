@@ -177,8 +177,7 @@ Letters do not insert themselves; instead, they are commands.
     (with-current-buffer buffer
       (pow-app-list-mode)
       (set (make-local-variable 'pow-app-list--view)
-           list-view)
-      (setq pow-app-list--view list-view))
+           list-view))
     buffer))
 
 (defun pow-list-view-refresh (list-view)
