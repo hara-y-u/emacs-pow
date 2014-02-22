@@ -4,7 +4,7 @@ DIRECTORY = http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/
 cached    = ert.el
 clean    += $(cached)
 
-testtargets  = pow.el
+testtargets  = pow-core.el
 testlogs = test-pow-app-el.log
 mostlyclean += $(testlogs)
 
