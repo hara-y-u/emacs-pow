@@ -37,7 +37,7 @@
         (menu-map (make-sparse-keymap "Pow App List")))
     (set-keymap-parent map tabulated-list-mode-map)
     (define-key map "\C-m" 'pow-app-list-open-app)
-    (define-key map "o" 'pow-app-list-find-app-path)
+    (define-key map "f" 'pow-app-list-find-app-path)
     (define-key map "u" 'pow-app-list-mark-unmark)
     (define-key map "d" 'pow-app-list-mark-delete)
     (define-key map "r" 'pow-app-list-refresh)
@@ -54,7 +54,7 @@
       '(menu-item "Previous" previous-line
                   :help "Previous Line"))
     (define-key menu-map [s2] '("--"))
-    (define-key menu-map [mo]
+    (define-key menu-map [mf]
       '(menu-item "Find App Path" pow-app-list-find-app-path
                   :help "Open app path with `find-file'"))
     (define-key menu-map [s3] '("--"))
@@ -87,11 +87,62 @@ Letters do not insert themselves; instead, they are commands.
   (add-hook 'tabulated-list-revert-hook 'pow-app-list-refresh nil t)
   (tabulated-list-init-header))
 
+(defmacro pow-app-list-with-proper-buffer (&rest body)
+  (declare (indent 0))
+  `(if (not (derived-mode-p 'pow-app-list-mode))
+       (error "The current buffer is not in Pow App List mode")
+     (progn ,@body)))
+
 (defun pow-app-list-open-app (&optional button)
   (interactive)
-  (let ((app (if button (button-get button 'app)
-               (tabulated-list-get-id))))
-    (pow-app-open app)))
+  (pow-app-list-with-proper-buffer
+   (let ((app (if button (button-get button 'app)
+                (tabulated-list-get-id))))
+     (pow-app-open app))))
+
+(defun pow-app-list-find-app-path (&optional button)
+  (interactive)
+  (pow-app-list-with-proper-buffer
+   (let ((app (if button (button-get button 'app)
+                (tabulated-list-get-id))))
+     (find-file (pow-app-path app)))))
+
+(defun pow-app-list-mark-unmark (&optional _num)
+  (interactive "p")
+  (pow-app-list-with-proper-buffer
+   (tabulated-list-put-tag " " 'next-line)))
+
+(defun pow-app-list-mark-delete (&optional _num)
+  (interactive "p")
+  (pow-app-list-with-proper-buffer
+   (tabulated-list-put-tag "D" 'next-line)))
+
+(defun pow-app-list-refresh ()
+  (interactive)
+  (pow-app-list-with-proper-buffer
+   (pow-list-view-reload pow-app-list--view)
+   (pow-list-view-refresh pow-app-list--view)))
+
+(defun pow-app-list-execute (&optional noquery)
+  (interactive)
+  (pow-app-list-with-proper-buffer
+   (let (apps-to-delete cmd app)
+     (save-excursion
+       (goto-char (point-min))
+       (while (not (eobp))
+         (setq cmd (char-after))
+         (unless (eq cmd ?\s)
+           (setq app (tabulated-list-get-id))
+           (cond ((eq cmd ?D)
+                  (push app apps-to-delete))))
+         (forward-line)))
+     ;; delete
+     (when (and apps-to-delete
+                (or noquery
+                    (yes-or-no-p "Delete marked apps?")))
+       (mapc 'pow-app-delete apps-to-delete)))
+   (pow-app-list-refresh)))
+
 
 ;; struct
 
@@ -103,13 +154,13 @@ Letters do not insert themselves; instead, they are commands.
 (defun make-pow-list-view (&rest options)
   (let* ((list-view (apply 'pow-list-view--inner-make options))
          (buffer (pow-list-view-create-buffer list-view)))
-    (setf (pow-list-view-buffer list-view) buffer)
     list-view))
 
 (defun pow-list-view-create-buffer (list-view)
   (let ((buffer (get-buffer-create "*Pow Apps*")))
+    (setf (pow-list-view-buffer list-view) buffer)
     (with-current-buffer buffer
-      (set (make-local-variable 'pow-app-list--view) list-view)
+      (defvar-local pow-app-list--view list-view)
       (pow-app-list-mode))
     buffer))
 
