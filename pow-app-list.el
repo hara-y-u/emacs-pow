@@ -168,12 +168,17 @@ Letters do not insert themselves; instead, they are commands.
          (buffer (pow-list-view-create-buffer list-view)))
     list-view))
 
+(defvar pow-app-list--view nil
+  "Reference to view object on pow-app-list-mode buffers.")
+
 (defun pow-list-view-create-buffer (list-view)
   (let ((buffer (get-buffer-create "*Pow Apps*")))
     (setf (pow-list-view-buffer list-view) buffer)
     (with-current-buffer buffer
-      (defvar-local pow-app-list--view list-view)
-      (pow-app-list-mode))
+      (pow-app-list-mode)
+      (set (make-local-variable 'pow-app-list--view)
+           list-view)
+      (setq pow-app-list--view list-view))
     buffer))
 
 (defun pow-list-view-refresh (list-view)
