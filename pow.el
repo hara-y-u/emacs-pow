@@ -1,4 +1,4 @@
-;;; pow.el --- pow (http://pow.cx/) manager for emacs
+;;; pow.el --- pow (http://pow.cx/) apps manager for emacs
 
 ;; Copyright (c) 2013  Free Software Foundation, Inc.
 
@@ -30,7 +30,7 @@
 ;;
 
 (defgroup pow nil
-  "pow manager"
+  "pow (http://pow.cx/) apps manager"
   :group 'development
   :prefix "pow-")
 
