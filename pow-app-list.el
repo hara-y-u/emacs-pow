@@ -32,6 +32,49 @@
 
 ;; app list mode
 
+(defvar pow-app-list-mode-map
+  (let ((map (make-sparse-keymap))
+        (menu-map (make-sparse-keymap "Pow App List")))
+    (set-keymap-parent map tabulated-list-mode-map)
+    (define-key map "\C-m" 'pow-app-list-open-app)
+    (define-key map "o" 'pow-app-list-find-app-path)
+    (define-key map "u" 'pow-app-list-mark-unmark)
+    (define-key map "d" 'pow-app-list-mark-delete)
+    (define-key map "r" 'pow-app-list-refresh)
+    (define-key map "x" 'pow-app-list-execute)
+    (define-key map [menu-bar pow-app-list-menu] (cons "Pow App List" menu-map))
+    (define-key menu-map [mq]
+      '(menu-item "Quit" quit-window
+                  :help "Quit listing apps"))
+    (define-key menu-map [s1] '("--"))
+    (define-key menu-map [mn]
+      '(menu-item "Next" next-line
+                  :help "Next Line"))
+    (define-key menu-map [mp]
+      '(menu-item "Previous" previous-line
+                  :help "Previous Line"))
+    (define-key menu-map [s2] '("--"))
+    (define-key menu-map [mo]
+      '(menu-item "Find App Path" pow-app-list-find-app-path
+                  :help "Open app path with `find-file'"))
+    (define-key menu-map [s3] '("--"))
+    (define-key menu-map [mu]
+      '(menu-item "Unmark" pow-app-list-mark-unmark
+                  :help "Clear any marks on a app and move to the next line"))
+    (define-key menu-map [md]
+      '(menu-item "Mark for Deletion" pow-app-list-mark-delete
+                  :help "Mark a app for deletion and move to the next line"))
+    (define-key menu-map [s4] '("--"))
+    (define-key menu-map [mr]
+      '(menu-item "Refresh App List" revert-buffer
+                  :help "Refresh the list of apps"))
+    (define-key menu-map [s5] '("--"))
+    (define-key menu-map [mx]
+      '(menu-item "Execute Actions" package-menu-execute
+                  :help "Perform all the marked actions"))
+    map)
+  "Local keymap for `pow-app-list-mode' buffers.")
+
 (define-derived-mode pow-app-list-mode tabulated-list-mode "Pow App List"
   "Major mode for browsing a list of pow apps.
 Letters do not insert themselves; instead, they are commands.
