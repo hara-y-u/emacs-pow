@@ -39,6 +39,7 @@
     (define-key map "\C-m" 'pow-app-list-open-app)
     (define-key map "f" 'pow-app-list-find-app-path)
     (define-key map "u" 'pow-app-list-mark-unmark)
+    (define-key map "U" 'pow-app-list-mark-unmark-all)
     (define-key map "d" 'pow-app-list-mark-delete)
     (define-key map "r" 'pow-app-list-refresh)
     (define-key map "x" 'pow-app-list-execute)
@@ -61,6 +62,9 @@
     (define-key menu-map [mu]
       '(menu-item "Unmark" pow-app-list-mark-unmark
                   :help "Clear any marks on a app and move to the next line"))
+    (define-key menu-map [mU]
+      '(menu-item "Unmark All" pow-app-list-mark-unmark-all
+                  :help "Clear all marks on apps"))
     (define-key menu-map [md]
       '(menu-item "Mark for Deletion" pow-app-list-mark-delete
                   :help "Mark a app for deletion and move to the next line"))
@@ -111,6 +115,14 @@ Letters do not insert themselves; instead, they are commands.
   (interactive "p")
   (pow-app-list-with-proper-buffer
    (tabulated-list-put-tag " " 'next-line)))
+
+(defun pow-app-list-mark-unmark-all ()
+  (interactive)
+  (pow-app-list-with-proper-buffer
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (pow-app-list-mark-unmark)))))
 
 (defun pow-app-list-mark-delete (&optional _num)
   (interactive "p")
