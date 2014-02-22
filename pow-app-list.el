@@ -34,7 +34,7 @@
 
 (defvar pow-app-list-mode-map
   (let ((map (make-sparse-keymap))
-        (menu-map (make-sparse-keymap "Pow App List")))
+        (menu-map (make-sparse-keymap "Pow")))
     (set-keymap-parent map tabulated-list-mode-map)
     (define-key map "\C-m" 'pow-app-list-open-app)
     (define-key map "f" 'pow-app-list-find-app-path)
@@ -43,10 +43,10 @@
     (define-key map "d" 'pow-app-list-mark-delete)
     (define-key map "r" 'pow-app-list-refresh)
     (define-key map "x" 'pow-app-list-execute)
-    (define-key map [menu-bar pow-app-list-menu] (cons "Pow App List" menu-map))
+    (define-key map [menu-bar pow-app-list] (cons "Pow" menu-map))
     (define-key menu-map [mq]
       '(menu-item "Quit" quit-window
-                  :help "Quit listing apps"))
+                  :help "Quit Listing Apps"))
     (define-key menu-map [s1] '("--"))
     (define-key menu-map [mn]
       '(menu-item "Next" next-line
@@ -74,7 +74,7 @@
                   :help "Refresh the list of apps"))
     (define-key menu-map [s5] '("--"))
     (define-key menu-map [mx]
-      '(menu-item "Execute Actions" package-menu-execute
+      '(menu-item "Execute Actions" pow-app-list-execute
                   :help "Perform all the marked actions"))
     map)
   "Local keymap for `pow-app-list-mode' buffers.")
