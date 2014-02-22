@@ -21,7 +21,10 @@
 ;;; Code:
 
 (require 'pow-core)
+(require 'tabulated-list)
 (eval-when-compile (require 'cl))
+
+
 
 ;;
 ;; List View
@@ -34,11 +37,11 @@
 Letters do not insert themselves; instead, they are commands.
 \\<pow-app-list-mode-map>
 \\{pow-app-list-mode-map}"
-  (setq tabulated-list-format [("Name" 18 nil) ;pow-app-list--name-predicate
+  (setq tabulated-list-format [("Name" 18 nil)
                                ("Path" 0 nil)])
   (setq tabulated-list-padding 2)
   (setq tabulated-list-sort-key (cons "Name" nil))
-  (add-hook 'tabulated-list-revert-hook 'pow-app-list--refresh nil t)
+  (add-hook 'tabulated-list-revert-hook 'pow-app-list-refresh nil t)
   (tabulated-list-init-header))
 
 (defun pow-app-list-open-app (&optional button)
