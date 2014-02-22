@@ -41,10 +41,11 @@ Letters do not insert themselves; instead, they are commands.
   (add-hook 'tabulated-list-revert-hook 'pow-app-list--refresh nil t)
   (tabulated-list-init-header))
 
-(defun pow-app-list--open-item (&optional button)
+(defun pow-app-list-open-app (&optional button)
   (interactive)
-  (let ((app-name)))
-  (pow-message "Implement me!"))
+  (let ((app (if button (button-get button 'app)
+               (tabulated-list-get-id))))
+    (pow-app-open app)))
 
 ;; struct
 
@@ -73,12 +74,12 @@ Letters do not insert themselves; instead, they are commands.
       (setq tabulated-list-entries
             (mapcar
              #'(lambda (app)
-                 (list (pow-app-name app)
+                 (list app
                        (vector (list (pow-app-name app)
                                      'face 'link
                                      'follow-link t
                                      'app app
-                                     'action 'pow-app-list--open-item
+                                     'action 'pow-app-list-open-app
                                      )
                                (propertize (pow-app-path app)
                                            'font-lock-face 'default))))
