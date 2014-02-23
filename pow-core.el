@@ -52,6 +52,10 @@
 ;; helper
 ;;
 
+(defun pow-rack-project-p (dir)
+  "Check if the `dir' is rack project."
+  (file-exists-p (expand-file-name "config.ru" dir)))
+
 (defun pow-rack-project-root-for-dir (dir)
   "Return the root directory of the rack project within which DIR is found."
   (setq dir (expand-file-name dir))
@@ -60,7 +64,7 @@
           ;;; copied from rinari.el
           (string-match "\\(^[[:alpha:]]:/$\\|^/[^\/]+:/?$\\|^/$\\)" dir))
          nil)
-        ((file-exists-p (expand-file-name "config.ru" dir)) dir)
+        ((pow-rack-project-p dir) dir)
         (t (pow-rack-project-root-for-dir (replace-regexp-in-string "[^/]+/?$" "" dir)))))
 
 (defun pow-same-file-p (&rest paths)
@@ -115,6 +119,16 @@ and then pass the output to `message'."
 (put 'pow-app-couldnt-restart 'error-message
      "Couldn't restart app")
 
+(put 'pow-app-invalid-path 'error-conditions
+     '(pow-app-invalid-path pow-app-error error))
+(put 'pow-app-invalid-path 'error-message
+     "Path is not rack project")
+
+(put 'pow-app-invalid-name 'error-conditions
+     '(pow-app-invalid-path pow-app-error error))
+(put 'pow-app-invalid-path 'error-message
+     "App name is invalid")
+
 ;; struct
 
 (defstruct (pow-app
@@ -168,8 +182,18 @@ options:
    (pow-app-name app)
    (pow-app-symlink-directory app)))
 
+(defun pow-app-validate (app)
+  "Validate app"
+  (unless (pow-rack-project-p (pow-app-path app))
+    (signal 'pow-app-invalid-path
+            (format "Path \"%s\" is not rack project" (pow-app-path app))))
+  (unless (string-match "^\\w+$" (pow-app-name app))
+    (signal 'pow-app-invalid-name
+            (format "Name \"%s\" is invalid for pow app" (pow-app-name app)))))
+
 (defun pow-app-save (app)
   "Save pow app as symlink in `symlink-directory'."
+  (pow-app-validate app)
   (make-directory (pow-app-symlink-directory app) 'parents)
   (condition-case err
       (make-symbolic-link (pow-app-path app)
@@ -246,15 +270,11 @@ and pass it to `pow-app-load-for-project'."
 ;; user function
 ;;
 
-;; core function
-
-(put 'pow-app-not-found 'error-conditions
-     '(pow-app-not-found pow-error error))
-(put 'pow-app-not-found 'error-message
-     "App not found")
-
-(defun pow-register-app (name path)
+;; TODO: familiar error message
+;;;###autoload
+(defun pow-register-app (&optional name path)
   "Register pow app for `name' and `path'."
+  (interactive "sApp name: \nDPath to rack project: ")
   (let ((app (make-pow-app :path path :name name)))
     (pow-app-save app)))
 
@@ -267,37 +287,35 @@ and pass it to `pow-app-load-for-project'."
        (setq ,app (pow-app-load-by-name ,name-or-app)
              name ,name-or-app))
      (if (null ,app)
-         (signal 'pow-app-not-found
-                 (format "App \"%s\" not found" name))
+         (pow-error "App \"%s\" not found" name)
        (progn ,@body))))
 
-(defun pow-unregister-app (name-or-app)
+(defmacro pow-interactive-app-name ()
+  "Call function interactively with completed app-name."
+  `(interactive
+    (list (completing-read "App name: "
+                           (mapcar #'pow-app-name (pow-app-load-all))))))
+
+;;;###autoload
+(defun pow-unregister-app (&optional name-or-app)
   "Unregister app specified by `name-or-app'."
+  (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-delete app)))
 
-(defun pow-open-app (name-or-app)
+;;;###autoload
+(defun pow-open-app (&optional name-or-app)
   "Open app specified by `name-or-app'."
+  (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-open app)))
 
-(defun pow-restart-app (name-or-app)
+;;;###autoload
+(defun pow-restart-app (&optional name-or-app)
   "Restart app specified by `name-or-app'."
+  (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-restart app)))
-
-
-;; interactive function
-
-(defmacro pow-wrap-error-in-message (message-on-success &rest body)
-  "A macro translates errors to error message for interactive fns."
-  (declare (indent 1))
-  `(condition-case err
-       (progn
-         ,@body
-         (unless (null ,message-on-success)
-           (pow-message ,message-on-success)))
-     (error (pow-error (cdr err)))))
 
 (defmacro pow-with-rack-project-root (root-path &rest body)
   "A macro verifies current-directory is in rack project,
@@ -307,6 +325,16 @@ and call `body' with project\'s `root-path'."
      (if ,root-path
          (progn ,@body)
        (pow-user-error "Not in rack project"))))
+
+(defmacro pow-with-message-error (message-on-success &rest body)
+  "A macro translates errors to error message for interactive fns."
+  (declare (indent 1))
+  `(condition-case err
+       (progn
+         ,@body
+         (unless (null ,message-on-success)
+           (pow-message ,message-on-success)))
+     (error (pow-error (cdr err)))))
 
 ;;;###autoload
 (defun pow-register-current-app (&optional name)
@@ -318,7 +346,7 @@ and call `body' with project\'s `root-path'."
       (when (null name)
           (setq name (read-string (format "App Name(%s):" appname)
                                   nil nil appname)))
-      (pow-wrap-error-in-message
+      (pow-with-message-error
           (format "Registered app \"%s\"" name)
         (pow-register-app name path)))))
 
@@ -364,7 +392,7 @@ shows prompt to choose one app from the apps."
   "Unregister a pow app for current project."
   (interactive)
   (pow-with-current-app app
-    (pow-wrap-error-in-message
+    (pow-with-message-error
         (format "Unregistered app \"%s\"" (pow-app-name app))
       (pow-unregister-app app))))
 
@@ -379,7 +407,7 @@ shows prompt to choose one app from the apps."
   "Restart a pow app for current project."
   (interactive)
   (pow-with-current-app app
-    (pow-wrap-error-in-message
+    (pow-with-message-error
         (format "App \"%s\" will restart on next request" (pow-app-name app))
       (pow-restart-app app))))
 
