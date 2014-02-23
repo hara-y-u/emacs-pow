@@ -50,10 +50,9 @@ Execute mark         | `pow-app-list-execute`         | `x`
 Refresh buffer       | `pow-app-list-refresh`         | `r`
 
 
-
 ## Contributing
 
-**If you interested in project, pullreqs are wellcome!**
+**If you are interested in project, pullreqs are wellcome!**
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
