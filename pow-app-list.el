@@ -91,69 +91,72 @@ Letters do not insert themselves; instead, they are commands.
   (add-hook 'tabulated-list-revert-hook 'pow-app-list-refresh nil t)
   (tabulated-list-init-header))
 
-(defmacro pow-app-list-with-proper-buffer (&rest body)
-  (declare (indent 0))
-  `(if (not (derived-mode-p 'pow-app-list-mode))
-       (error "The current buffer is not in Pow App List mode")
-     (progn ,@body)))
+(defmacro pow-app-list-ad-buffer-check (fn)
+  (declare (indent 1))
+  `(progn
+    (defadvice ,fn (before pow-app-list-check-buffer (&rest arg))
+     "Check if in `pow-app-list-mode' buffer"
+     (unless (derived-mode-p 'pow-app-list-mode)
+       (user-error "The current buffer is not in Pow App List mode")))
+    (ad-activate ',fn)))
 
 (defun pow-app-list-open-app (&optional button)
   (interactive)
-  (pow-app-list-with-proper-buffer
-   (let ((app (if button (button-get button 'app)
-                (tabulated-list-get-id))))
-     (pow-app-open app))))
+  (let ((app (if button (button-get button 'app)
+               (tabulated-list-get-id))))
+    (pow-app-open app)))
+(pow-app-list-ad-buffer-check pow-app-list-open-app)
 
 (defun pow-app-list-find-app-path (&optional button)
   (interactive)
-  (pow-app-list-with-proper-buffer
-   (let ((app (if button (button-get button 'app)
-                (tabulated-list-get-id))))
-     (find-file (pow-app-path app)))))
+  (let ((app (if button (button-get button 'app)
+               (tabulated-list-get-id))))
+    (find-file (pow-app-path app))))
+(pow-app-list-ad-buffer-check pow-app-list-find-app-path)
 
 (defun pow-app-list-mark-unmark (&optional _num)
   (interactive "p")
-  (pow-app-list-with-proper-buffer
-   (tabulated-list-put-tag " " 'next-line)))
+  (tabulated-list-put-tag " " 'next-line))
+(pow-app-list-ad-buffer-check pow-app-list-mark-unmark)
 
 (defun pow-app-list-mark-unmark-all ()
   (interactive)
-  (pow-app-list-with-proper-buffer
-    (save-excursion
-      (goto-char (point-min))
-      (while (not (eobp))
-        (pow-app-list-mark-unmark)))))
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (pow-app-list-mark-unmark))))
+(pow-app-list-ad-buffer-check pow-app-list-mark-unmark-all)
 
 (defun pow-app-list-mark-delete (&optional _num)
   (interactive "p")
-  (pow-app-list-with-proper-buffer
-   (tabulated-list-put-tag "D" 'next-line)))
+  (tabulated-list-put-tag "D" 'next-line))
+(pow-app-list-ad-buffer-check pow-app-list-mark-delete)
 
 (defun pow-app-list-refresh ()
   (interactive)
-  (pow-app-list-with-proper-buffer
-   (pow-list-view-reload pow-app-list--view)
-   (pow-list-view-refresh pow-app-list--view)))
+  (pow-list-view-reload pow-app-list--view)
+  (pow-list-view-refresh pow-app-list--view))
+(pow-app-list-ad-buffer-check pow-app-list-refresh)
 
 (defun pow-app-list-execute (&optional noquery)
   (interactive)
-  (pow-app-list-with-proper-buffer
-   (let (apps-to-delete cmd app)
-     (save-excursion
-       (goto-char (point-min))
-       (while (not (eobp))
-         (setq cmd (char-after))
-         (unless (eq cmd ?\s)
-           (setq app (tabulated-list-get-id))
-           (cond ((eq cmd ?D)
-                  (push app apps-to-delete))))
-         (forward-line)))
-     ;; delete
-     (when (and apps-to-delete
-                (or noquery
-                    (yes-or-no-p "Delete marked apps?")))
-       (mapc 'pow-app-delete apps-to-delete)))
-   (pow-app-list-refresh)))
+  (let (apps-to-delete cmd app)
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (setq cmd (char-after))
+        (unless (eq cmd ?\s)
+          (setq app (tabulated-list-get-id))
+          (cond ((eq cmd ?D)
+                 (push app apps-to-delete))))
+        (forward-line)))
+    ;; delete
+    (when (and apps-to-delete
+               (or noquery
+                   (yes-or-no-p "Delete marked apps?")))
+      (mapc 'pow-app-delete apps-to-delete)))
+  (pow-app-list-refresh))
+(pow-app-list-ad-buffer-check pow-app-list-execute)
 
 
 ;; struct
