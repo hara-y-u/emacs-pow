@@ -285,6 +285,7 @@ and pass it to `pow-app-load-for-project'."
 (put 'pow-app-not-found 'error-message
      "App not found")
 
+;;;###autoload
 (defun pow-register-app (&optional name path)
   "Register pow app for `name' and `path'."
   (interactive "sApp name: \nDPath to rack project: ")
@@ -305,18 +306,30 @@ and pass it to `pow-app-load-for-project'."
                  (format "App \"%s\" not found" name))
        (progn ,@body))))
 
-(defun pow-unregister-app (name-or-app)
+(defmacro pow-interactive-app-name ()
+  "Call function interactively with completed app-name."
+  `(interactive
+    (list (completing-read "App name: "
+                           (mapcar #'pow-app-name (pow-app-load-all))))))
+
+;;;###autoload
+(defun pow-unregister-app (&optional name-or-app)
   "Unregister app specified by `name-or-app'."
+  (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-delete app)))
 
-(defun pow-open-app (name-or-app)
+;;;###autoload
+(defun pow-open-app (&optional name-or-app)
   "Open app specified by `name-or-app'."
+  (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-open app)))
 
-(defun pow-restart-app (name-or-app)
+;;;###autoload
+(defun pow-restart-app (&optional name-or-app)
   "Restart app specified by `name-or-app'."
+  (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-restart app)))
 
