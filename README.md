@@ -13,9 +13,7 @@ Pow (http://pow.cx) apps management on emacs
     git clone https://github.com/yukihr/emacs-pow.git
     ```
 
-2. Set your init file
-
-    `~/.emacs.d/init.el`
+2. Add following line to your init file (like: `~/.emacs.d/init.el`)
 
     ```
     (add-to-list 'load-path "path/to/emacs-pow")
