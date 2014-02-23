@@ -19,7 +19,10 @@ Pow (http://pow.cx) apps management on emacs
 
     ```
     (add-to-list 'load-path "path/to/emacs-pow")
-    (require 'pow)
+    (if (>= (string-to-number (car (split-string emacs-version "\\.")))
+            24)
+        (require 'pow)
+      (require 'pow-core))
     ```
 
 ### Package
