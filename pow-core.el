@@ -187,7 +187,7 @@ options:
   (unless (pow-rack-project-p (pow-app-path app))
     (signal 'pow-app-invalid-path
             (format "Path \"%s\" is not rack project" (pow-app-path app))))
-  (unless (string-match "^\\w+$" (pow-app-name app))
+  (unless (string-match "\\([_-]\\|\\w+\\)" (pow-app-name app))
     (signal 'pow-app-invalid-name
             (format "Name \"%s\" is invalid for pow app" (pow-app-name app)))))
 
