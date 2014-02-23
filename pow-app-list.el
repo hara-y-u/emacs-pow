@@ -24,8 +24,6 @@
 (require 'tabulated-list)
 (eval-when-compile (require 'cl))
 
-
-
 ;;
 ;; List View
 ;;
@@ -235,6 +233,8 @@ Letters do not insert themselves; instead, they are commands.
     (pow-list-view-refresh list-view)
     (pow-list-view-show list-view)))
 (defalias 'list-pow-apps 'pow-list-apps)
+
+
 
 (provide 'pow-app-list)
 ;;; pow-app-list.el ends here

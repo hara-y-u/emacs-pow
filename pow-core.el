@@ -385,6 +385,5 @@ shows prompt to choose one app from the apps."
 
 
 
-;; provide
 (provide 'pow-core)
 ;;; pow-core.el ends here
