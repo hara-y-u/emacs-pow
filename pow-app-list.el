@@ -92,6 +92,7 @@ Letters do not insert themselves; instead, they are commands.
   (tabulated-list-init-header))
 
 (defmacro pow-app-list-ad-buffer-check (fn)
+  "Make sure the `fn' is called in `pow-app-list-mode' buffer."
   (declare (indent 1))
   `(progn
     (defadvice ,fn (before pow-app-list-check-buffer (&rest arg))
@@ -101,6 +102,7 @@ Letters do not insert themselves; instead, they are commands.
     (ad-activate ',fn)))
 
 (defun pow-app-list-open-app (&optional button)
+  "Open current line app."
   (interactive)
   (let ((app (if button (button-get button 'app)
                (tabulated-list-get-id))))
@@ -108,6 +110,7 @@ Letters do not insert themselves; instead, they are commands.
 (pow-app-list-ad-buffer-check pow-app-list-open-app)
 
 (defun pow-app-list-find-app-path (&optional button)
+  "`find-file' project directory of current line app."
   (interactive)
   (let ((app (if button (button-get button 'app)
                (tabulated-list-get-id))))
@@ -115,11 +118,13 @@ Letters do not insert themselves; instead, they are commands.
 (pow-app-list-ad-buffer-check pow-app-list-find-app-path)
 
 (defun pow-app-list-mark-unmark (&optional _num)
+  "Unmark current line app."
   (interactive "p")
   (tabulated-list-put-tag " " 'next-line))
 (pow-app-list-ad-buffer-check pow-app-list-mark-unmark)
 
 (defun pow-app-list-mark-unmark-all ()
+  "Unmark all apps."
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -128,17 +133,20 @@ Letters do not insert themselves; instead, they are commands.
 (pow-app-list-ad-buffer-check pow-app-list-mark-unmark-all)
 
 (defun pow-app-list-mark-delete (&optional _num)
+  "Mark delete current app."
   (interactive "p")
   (tabulated-list-put-tag "D" 'next-line))
 (pow-app-list-ad-buffer-check pow-app-list-mark-delete)
 
 (defun pow-app-list-refresh ()
+  "Refresh `pow-app-list-mode' buffer."
   (interactive)
   (pow-list-view-reload pow-app-list--view)
   (pow-list-view-refresh pow-app-list--view))
 (pow-app-list-ad-buffer-check pow-app-list-refresh)
 
 (defun pow-app-list-execute (&optional noquery)
+  "Execute all marked actions."
   (interactive)
   (let (apps-to-delete cmd app)
     (save-excursion
@@ -164,9 +172,11 @@ Letters do not insert themselves; instead, they are commands.
 (defstruct (pow-list-view
             (:constructor nil)
             (:constructor pow-list-view--inner-make))
+  "View for convenience of manipulate `pow-app-list-mode'."
   apps buffer)
 
 (defun make-pow-list-view (&rest options)
+  "Constructor of `pow-list-view'."
   (let* ((list-view (apply 'pow-list-view--inner-make options))
          (buffer (pow-list-view-create-buffer list-view)))
     list-view))
@@ -175,6 +185,7 @@ Letters do not insert themselves; instead, they are commands.
   "Reference to view object on pow-app-list-mode buffers.")
 
 (defun pow-list-view-create-buffer (list-view)
+  "Create buffer for `pow-list-view'."
   (let ((buffer (get-buffer-create "*Pow Apps*")))
     (setf (pow-list-view-buffer list-view) buffer)
     (with-current-buffer buffer
@@ -184,6 +195,7 @@ Letters do not insert themselves; instead, they are commands.
     buffer))
 
 (defun pow-list-view-refresh (list-view)
+  "Refresh buffer for `pow-list-view'."
   (let ((apps (pow-list-view-apps list-view))
         (buffer (pow-list-view-buffer list-view)))
     (with-current-buffer buffer
@@ -204,16 +216,19 @@ Letters do not insert themselves; instead, they are commands.
       (tabulated-list-print 'remember-pos))))
 
 (defun pow-list-view-reload (list-view)
+  "Reload all apps for `pow-list-view'."
   (let ((apps (pow-app-load-all)))
     (setf (pow-list-view-apps list-view) apps)))
 
 (defun pow-list-view-show (list-view)
+  "Show `pow-list-view'."
   (pop-to-buffer (pow-list-view-buffer list-view)))
 
 ;; user function
 
 ;;;###autoload
 (defun pow-list-apps ()
+  "List all registered pow apps."
   (interactive)
   (let* ((list-view (make-pow-list-view)))
     (pow-list-view-reload list-view)
