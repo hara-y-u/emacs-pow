@@ -39,23 +39,25 @@ To regsister your rack project to pow, exec `M-x pow-register-current-app` in yo
 
 `M-x list-pow-apps` lists all registered apps on pow. You can use following commands on each items in listing buffer.
 
-Action               | Command Name                   | Keybind
----------------------|--------------------------------|-------------
-Open app in browser  | `pow-app-list-open-app`        | `RET`, `C-m`
-Open path in emacs   | `pow-app-list-find-app-path`   | `f`
-Unmark app           | `pow-app-list-mark-unmark`     | `u`
-Unmark all app       | `pow-app-list-mark-unmark-all` | `U`
-Mark app as _delete_ | `pow-app-list-mark-delete`     | `d`
-Execute mark         | `pow-app-list-execute`         | `x`
-Refresh buffer       | `pow-app-list-refresh`         | `r`
+| Action               | Command Name                   | Keybind      |
+|----------------------|--------------------------------|--------------|
+| Open app in browser  | `pow-app-list-open-app`        | `RET`, `C-m` |
+| Open path in emacs   | `pow-app-list-find-app-path`   | `f`          |
+| Unmark app           | `pow-app-list-mark-unmark`     | `u`          |
+| Unmark all app       | `pow-app-list-mark-unmark-all` | `U`          |
+| Mark app as _delete_ | `pow-app-list-mark-delete`     | `d`          |
+| Execute mark         | `pow-app-list-execute`         | `x`          |
+| Refresh buffer       | `pow-app-list-refresh`         | `r`          |
 
 
 ## Contributing
 
-**If you are interested in project, pullreqs are wellcome!**
+**If you are interested in project, pullreqs are welcome!**
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+**Feature request is also welcome! Please put on [issue](https://github.com/yukihr/emacs-pow/issues/new).**
