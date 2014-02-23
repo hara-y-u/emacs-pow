@@ -270,28 +270,13 @@ and pass it to `pow-app-load-for-project'."
 ;; user function
 ;;
 
-(defmacro pow-with-message-error (message-on-success &rest body)
-  "A macro translates errors to error message for interactive fns."
-  (declare (indent 1))
-  `(condition-case err
-       (progn
-         ,@body
-         (unless (null ,message-on-success)
-           (pow-message ,message-on-success)))
-     (error (pow-error (cdr err)))))
-
-(put 'pow-app-not-found 'error-conditions
-     '(pow-app-not-found pow-error error))
-(put 'pow-app-not-found 'error-message
-     "App not found")
-
+;; TODO: familiar error message
 ;;;###autoload
 (defun pow-register-app (&optional name path)
   "Register pow app for `name' and `path'."
   (interactive "sApp name: \nDPath to rack project: ")
-  (pow-with-message-error nil
-    (let ((app (make-pow-app :path path :name name)))
-      (pow-app-save app))))
+  (let ((app (make-pow-app :path path :name name)))
+    (pow-app-save app)))
 
 (defmacro pow--with-name-or-app (name-or-app app &rest body)
   "An macro receives `name-or-app' arg and call `body' certainly with `app'."
@@ -302,8 +287,7 @@ and pass it to `pow-app-load-for-project'."
        (setq ,app (pow-app-load-by-name ,name-or-app)
              name ,name-or-app))
      (if (null ,app)
-         (signal 'pow-app-not-found
-                 (format "App \"%s\" not found" name))
+         (pow-error "App \"%s\" not found" name)
        (progn ,@body))))
 
 (defmacro pow-interactive-app-name ()
@@ -341,6 +325,16 @@ and call `body' with project\'s `root-path'."
      (if ,root-path
          (progn ,@body)
        (pow-user-error "Not in rack project"))))
+
+(defmacro pow-with-message-error (message-on-success &rest body)
+  "A macro translates errors to error message for interactive fns."
+  (declare (indent 1))
+  `(condition-case err
+       (progn
+         ,@body
+         (unless (null ,message-on-success)
+           (pow-message ,message-on-success)))
+     (error (pow-error (cdr err)))))
 
 ;;;###autoload
 (defun pow-register-current-app (&optional name)
