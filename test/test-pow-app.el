@@ -19,7 +19,7 @@
 ;; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 (require 'ert)
-(require 'pow)
+(require 'pow-core)
 
 (ert-deftest make-pow-app ()
   (let ((app (make-pow-app :path "/home/huga/proj/hoge")))
@@ -44,7 +44,7 @@
     (should (y-or-n-p "App url opened correctly?"))))
 
 (ert-deftest pow-app-save ()
-  (let* ((app (make-pow-app :path "/home/huga/proj/hausaluaoeu"))
+  (let* ((app (make-pow-app :path "~/Projects/test-project"))
          (symlink-path (expand-file-name
                         (pow-app-name app)
                         (pow-app-symlink-directory app))))
