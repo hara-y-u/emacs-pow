@@ -38,15 +38,15 @@ To regsister your rack project to pow, exec `M-x pow-register-current-app` in yo
 
 `M-x list-pow-apps` lists all registered apps on pow. You can use following commands on each items in listing buffer.
 
-Action               | Command Name                 | Keybind
-------------------------------------------------------------------
-Open app in browser  | pow-app-list-open-app        | `RET`, `C-m`
-Open path in emacs   | pow-app-list-find-app-path   | `f`
-Unmark app           | pow-app-list-mark-unmark     | `u`
-Unmark all app       | pow-app-list-mark-unmark-all | `U`
-Mark app as _delete_ | pow-app-list-mark-delete     | `d`
-Execute mark         | pow-app-list-execute         | `x`
-Refresh buffer       | pow-app-list-refresh         | `r`
+Action               | Command Name                   | Keybind
+---------------------|--------------------------------|-------------
+Open app in browser  | `pow-app-list-open-app`        | `RET`, `C-m`
+Open path in emacs   | `pow-app-list-find-app-path`   | `f`
+Unmark app           | `pow-app-list-mark-unmark`     | `u`
+Unmark all app       | `pow-app-list-mark-unmark-all` | `U`
+Mark app as _delete_ | `pow-app-list-mark-delete`     | `d`
+Execute mark         | `pow-app-list-execute`         | `x`
+Refresh buffer       | `pow-app-list-refresh`         | `r`
 
 
 
