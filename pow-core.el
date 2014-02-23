@@ -134,7 +134,7 @@ and then pass the output to `message'."
 (defstruct (pow-app
             (:constructor nil)
             (:constructor pow-app--inner-make))
-  "A structure abstructing pow app symlinks."
+  "A structure abstracting pow app symlinks."
   (symlink-directory pow-symlink-directory)
   path
   (name "")
