@@ -5,7 +5,12 @@ Pow (http://pow.cx) apps management on emacs
 
 ## Install
 
-### From Repository
+### Package
+
+TODO
+
+
+### From Raw Repository
 
 1. Clone to local
 
@@ -23,16 +28,19 @@ Pow (http://pow.cx) apps management on emacs
       (require 'pow-core))
     ```
 
-### Package
-
-TODO
-
 
 ## Simple Usage
 
-To regsister your rack project to pow, exec `M-x pow-register-current-app` in your project. And `M-x pow-open-current-app` to open the project app in browser.
+To regsister your rack project to pow, exec `M-x pow-register-current-app` in your project.
 
-`M-x list-pow-apps` lists all registered pow apps (only emacs-version >= 24 is supported). For command reference, try exec `M-x apropos-command RET pow`.
+And `M-x pow-open-current-app` to open the project app in browser.
+
+`M-x pow-restart-current-app` will flag `restart` current app.
+
+`M-x list-pow-apps` lists all registered pow apps (only emacs-version >= 24 is supported). 
+
+
+For other command reference, try exec `M-x apropos-command RET pow-`.
 
 
 ## Listing Apps
