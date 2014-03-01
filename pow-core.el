@@ -212,6 +212,12 @@ options:
                      (pow-app-name app)
                      pow-symlink-directory)))))
 
+(defun pow-app-rename (app new-name)
+  "Rename pow app symlink."
+  (pow-app-delete app)
+  (setf (pow-app-name app) new-name)
+  (pow-app-save app))
+
 (defun pow-app-restart (app)
   "Flag pow app to restart on next request."
   (condition-case err
@@ -290,11 +296,30 @@ and pass it to `pow-app-load-for-project'."
          (pow-error "App \"%s\" not found" name)
        (progn ,@body))))
 
+(defvar pow-interactive-strategies-list
+  `((:app-name (completing-read
+                "App name: "
+                (mapcar #'pow-app-name (pow-app-load-all))))
+    (:new-app-name (read-string "New app name:")))
+  "Strategies for reading string by `interactive'.")
+
+(defun pow-interactive-strategies (&rest strategies)
+  "Select interactive strategies."
+  (reduce
+   #'(lambda (mem val)
+       (if (member (car val) strategies)
+           (append mem (list (cadr val)))
+         mem))
+   pow-interactive-strategies-list
+   :initial-value nil))
+
+(defmacro pow-interactive (&rest args)
+  `(interactive
+    (list ,@(apply 'pow-interactive-strategies args))))
+
 (defmacro pow-interactive-app-name ()
   "Call function interactively with completed app-name."
-  `(interactive
-    (list (completing-read "App name: "
-                           (mapcar #'pow-app-name (pow-app-load-all))))))
+  `(pow-interactive :app-name))
 
 ;;;###autoload
 (defun pow-unregister-app (&optional name-or-app)
@@ -316,6 +341,13 @@ and pass it to `pow-app-load-for-project'."
   (pow-interactive-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-restart app)))
+
+;;;###autoload
+(defun pow-rename-app (&optional name-or-app new-app-name)
+  "Rename app specified by `name-or-app' to `new-app-name'."
+  (pow-interactive :app-name :new-app-name)
+  (pow--with-name-or-app name-or-app app
+    (pow-app-rename app new-app-name)))
 
 (defmacro pow-with-rack-project-root (root-path &rest body)
   "A macro verifies current-directory is in rack project,
@@ -411,6 +443,11 @@ shows prompt to choose one app from the apps."
         (format "App \"%s\" will restart on next request" (pow-app-name app))
       (pow-restart-app app))))
 
+;;;###autoload
+(defun pow-rename-current-app (&optional new-app-name)
+  "Rename a pow app for current project."
+  (pow-interactive :new-app-name)
+  (pow-with-current-app app (pow-rename-app app new-app-name)))
 
 
 (provide 'pow-core)

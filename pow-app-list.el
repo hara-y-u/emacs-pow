@@ -35,6 +35,7 @@
         (menu-map (make-sparse-keymap "Pow")))
     (set-keymap-parent map tabulated-list-mode-map)
     (define-key map "\C-m" 'pow-app-list-open-app)
+    (define-key map "n" 'pow-app-list-rename-app)
     (define-key map "f" 'pow-app-list-find-app-path)
     (define-key map "u" 'pow-app-list-mark-unmark)
     (define-key map "U" 'pow-app-list-mark-unmark-all)
@@ -53,6 +54,9 @@
       '(menu-item "Previous" previous-line
                   :help "Previous Line"))
     (define-key menu-map [s2] '("--"))
+    (define-key menu-map [mn]
+      '(menu-item "Rename App" pow-app-list-rename-app
+                  :help "Rename app"))
     (define-key menu-map [mf]
       '(menu-item "Find App Path" pow-app-list-find-app-path
                   :help "Open app path with `find-file'"))
@@ -99,6 +103,13 @@ Letters do not insert themselves; instead, they are commands.
        (user-error "The current buffer is not in Pow App List mode")))
     (ad-activate ',fn)))
 
+(defun pow-app-list-refresh ()
+  "Refresh `pow-app-list-mode' buffer."
+  (interactive)
+  (pow-list-view-reload pow-app-list--view)
+  (pow-list-view-refresh pow-app-list--view))
+(pow-app-list-ad-buffer-check pow-app-list-refresh)
+
 (defun pow-app-list-open-app (&optional button)
   "Open current line app."
   (interactive)
@@ -106,6 +117,15 @@ Letters do not insert themselves; instead, they are commands.
                (tabulated-list-get-id))))
     (pow-app-open app)))
 (pow-app-list-ad-buffer-check pow-app-list-open-app)
+
+(defun pow-app-list-rename-app (&optional new-app-name button)
+  "Rename current line app."
+  (pow-interactive :new-app-name)
+  (let ((app (if button (button-get button 'app)
+               (tabulated-list-get-id))))
+    (pow-app-rename app new-app-name))
+  (pow-app-list-refresh))
+(pow-app-list-ad-buffer-check pow-app-list-rename-app)
 
 (defun pow-app-list-find-app-path (&optional button)
   "`find-file' project directory of current line app."
@@ -135,13 +155,6 @@ Letters do not insert themselves; instead, they are commands.
   (interactive "p")
   (tabulated-list-put-tag "D" 'next-line))
 (pow-app-list-ad-buffer-check pow-app-list-mark-delete)
-
-(defun pow-app-list-refresh ()
-  "Refresh `pow-app-list-mode' buffer."
-  (interactive)
-  (pow-list-view-reload pow-app-list--view)
-  (pow-list-view-refresh pow-app-list--view))
-(pow-app-list-ad-buffer-check pow-app-list-refresh)
 
 (defun pow-app-list-execute (&optional noquery)
   "Execute all marked actions."
