@@ -37,7 +37,7 @@ And `M-x pow-open-current-app` to open the project app in browser.
 
 `M-x pow-restart-current-app` will flag `restart` current app.
 
-`M-x list-pow-apps` lists all registered pow apps (only emacs-version >= 24 is supported). 
+`M-x list-pow-apps` lists all registered pow apps (only emacs-version >= 24 is supported).
 
 
 For other command reference, try exec `M-x apropos-command RET pow-`.
@@ -49,15 +49,15 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 
 `M-x list-pow-apps` lists all registered apps on pow. You can use following commands on each items in listing buffer.
 
-| Action               | Command Name                   | Keybind      |
-|----------------------|--------------------------------|--------------|
-| Open app in browser  | `pow-app-list-open-app`        | `RET`, `C-m` |
-| Open path in emacs   | `pow-app-list-find-app-path`   | `f`          |
-| Unmark app           | `pow-app-list-mark-unmark`     | `u`          |
-| Unmark all app       | `pow-app-list-mark-unmark-all` | `U`          |
-| Mark app as _delete_ | `pow-app-list-mark-delete`     | `d`          |
-| Execute mark         | `pow-app-list-execute`         | `x`          |
-| Refresh buffer       | `pow-app-list-refresh`         | `r`          |
+| Action               | Command Name                   | Keybind                        |
+|----------------------|--------------------------------|--------------------------------|
+| Open app in browser  | `pow-app-list-open-app`        | <kbd>RET</kbd>, <kbd>C-m</kbd> |
+| Open path in emacs   | `pow-app-list-find-app-path`   | <kbd>f</kbd>                   |
+| Unmark app           | `pow-app-list-mark-unmark`     | <kbd>u</kbd>                   |
+| Unmark all app       | `pow-app-list-mark-unmark-all` | <kbd>U</kbd>                   |
+| Mark app as _delete_ | `pow-app-list-mark-delete`     | <kbd>d</kbd>                   |
+| Execute mark         | `pow-app-list-execute`         | <kbd>x</kbd>                   |
+| Refresh buffer       | `pow-app-list-refresh`         | <kbd>r</kbd>                   |
 
 
 ## Contributing
