@@ -34,52 +34,33 @@
   (let ((map (make-sparse-keymap))
         (menu-map (make-sparse-keymap "Pow")))
     (set-keymap-parent map tabulated-list-mode-map)
-    (define-key map "\C-m" 'pow-app-list-open-app)
-    (define-key map "n" 'pow-app-list-rename-app)
-    (define-key map "f" 'pow-app-list-find-app-path)
-    (define-key map "u" 'pow-app-list-mark-unmark)
-    (define-key map "U" 'pow-app-list-mark-unmark-all)
-    (define-key map "d" 'pow-app-list-mark-delete)
-    (define-key map "r" 'pow-app-list-refresh)
-    (define-key map "x" 'pow-app-list-execute)
-    (define-key map [menu-bar pow-app-list] (cons "Pow" menu-map))
-    (define-key menu-map [mq]
-      '(menu-item "Quit" quit-window
-                  :help "Quit Listing Apps"))
-    (define-key menu-map [s1] '("--"))
-    (define-key menu-map [mn]
-      '(menu-item "Next" next-line
-                  :help "Next Line"))
-    (define-key menu-map [mp]
-      '(menu-item "Previous" previous-line
-                  :help "Previous Line"))
-    (define-key menu-map [s2] '("--"))
-    (define-key menu-map [mn]
-      '(menu-item "Rename App" pow-app-list-rename-app
-                  :help "Rename app"))
-    (define-key menu-map [mf]
-      '(menu-item "Find App Path" pow-app-list-find-app-path
-                  :help "Open app path with `find-file'"))
-    (define-key menu-map [s3] '("--"))
-    (define-key menu-map [mu]
-      '(menu-item "Unmark" pow-app-list-mark-unmark
-                  :help "Clear any marks on a app and move to the next line"))
-    (define-key menu-map [mU]
-      '(menu-item "Unmark All" pow-app-list-mark-unmark-all
-                  :help "Clear all marks on apps"))
-    (define-key menu-map [md]
-      '(menu-item "Mark for Deletion" pow-app-list-mark-delete
-                  :help "Mark a app for deletion and move to the next line"))
-    (define-key menu-map [s4] '("--"))
-    (define-key menu-map [mr]
-      '(menu-item "Refresh App List" revert-buffer
-                  :help "Refresh the list of apps"))
-    (define-key menu-map [s5] '("--"))
-    (define-key menu-map [mx]
-      '(menu-item "Execute Actions" pow-app-list-execute
-                  :help "Perform all the marked actions"))
+    (define-key map (kbd "C-m") 'pow-app-list-open-app)
+    (define-key map (kbd "n")   'pow-app-list-rename-app)
+    (define-key map (kbd "f")   'pow-app-list-find-app-path)
+    (define-key map (kbd "u")   'pow-app-list-mark-unmark)
+    (define-key map (kbd "U")   'pow-app-list-mark-unmark-all)
+    (define-key map (kbd "d")   'pow-app-list-mark-delete)
+    (define-key map (kbd "r")   'pow-app-list-refresh)
+    (define-key map (kbd "x")   'pow-app-list-execute)
     map)
   "Local keymap for `pow-app-list-mode' buffers.")
+
+(easy-menu-define pow-app-list-menu pow-app-list-mode-map
+  "Menu for `pow-app-list-mode'"
+  '("Pow Apps"
+    ["Execute actions" pow-app-list-execute]
+    "--"
+    ["Refresh app list" revert-buffer]
+    "--"
+    ["Unmark all" pow-app-list-mark-unmark-all]
+    ["Unmark" pow-app-list-mark-unmark]
+    ["Mark for deletion" pow-app-list-mark-delete]
+    "--"
+    ["Open app" pow-app-list-open-app]
+    ["`find-file' app" pow-app-list-find-app-path]
+    ["Rename app" pow-app-list-rename-app]
+    "--"
+    ["Quit" quit-window]))
 
 (define-derived-mode pow-app-list-mode tabulated-list-mode "Pow App List"
   "Major mode for browsing a list of pow apps.
