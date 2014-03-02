@@ -53,6 +53,7 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 |----------------------|--------------------------------|--------------------------------|
 | Open app in browser  | `pow-app-list-open-app`        | <kbd>RET</kbd>, <kbd>C-m</kbd> |
 | Open path in emacs   | `pow-app-list-find-app-path`   | <kbd>f</kbd>                   |
+| Rename app           | `pow-app-list-rename-app`      | <kbd>n</kbd>                   |
 | Unmark app           | `pow-app-list-mark-unmark`     | <kbd>u</kbd>                   |
 | Unmark all app       | `pow-app-list-mark-unmark-all` | <kbd>U</kbd>                   |
 | Mark app as _delete_ | `pow-app-list-mark-delete`     | <kbd>d</kbd>                   |
