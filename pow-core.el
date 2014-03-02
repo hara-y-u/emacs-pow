@@ -221,17 +221,18 @@ options:
 
 (defun pow-app-restart (app)
   "Flag pow app to restart on next request."
-  (condition-case err
-      (let* ((txt "restart.txt")
-             (dir (expand-file-name "tmp" (pow-app-path app)))
-             (path (expand-file-name txt dir)))
-        (make-directory dir 'parents)
-        (write-region "" nil path nil 'quiet))
-    (file-error
-     (signal 'pow-app-couldnt-restart
-             (format "Couldn't restart app \"%s\". Check if file \"%s\" is writable"
-                     (pow-app-name app)
-                     path)))))
+  (let* ((txt "restart.txt")
+         (dir (expand-file-name "tmp" (pow-app-path app)))
+         (path (expand-file-name txt dir)))
+    (condition-case err
+        (progn
+          (make-directory dir 'parents)
+          (write-region "" nil path nil 'quiet))
+      (file-error
+       (signal 'pow-app-couldnt-restart
+               (format "Couldn't restart app \"%s\". Check if file \"%s\" is writable"
+                       (pow-app-name app)
+                       path))))))
 
 (defun pow-app-load-all ()
   "Load all pow apps in `symlink-directory'."
