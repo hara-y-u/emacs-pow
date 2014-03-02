@@ -450,6 +450,5 @@ shows prompt to choose one app from the apps."
   (pow-interactive :new-app-name)
   (pow-with-current-app app (pow-rename-app app new-app-name)))
 
-
 (provide 'pow-core)
 ;;; pow-core.el ends here
