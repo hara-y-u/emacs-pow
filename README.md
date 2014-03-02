@@ -5,6 +5,8 @@ Pow (http://pow.cx) apps management on emacs
 
 ## Install
 
+**Emacs24 or above is supported.**
+
 ### Package
 
 TODO
@@ -22,10 +24,7 @@ TODO
 
     ```
     (add-to-list 'load-path "path/to/emacs-pow")
-    (if (>= (string-to-number (car (split-string emacs-version "\\.")))
-            24)
-        (require 'pow)
-      (require 'pow-core))
+    (require 'pow)
     ```
 
 
@@ -44,8 +43,6 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 
 
 ## Listing Apps
-
-**Available on Emacs24**
 
 `M-x list-pow-apps` lists all registered apps on pow. You can use following commands on each items in listing buffer.
 
