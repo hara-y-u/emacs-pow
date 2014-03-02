@@ -35,7 +35,7 @@
         (menu-map (make-sparse-keymap "Pow")))
     (set-keymap-parent map tabulated-list-mode-map)
     (define-key map (kbd "C-m") 'pow-app-list-open-app)
-    (define-key map (kbd "n")   'pow-app-list-rename-app)
+    (define-key map (kbd "m")   'pow-app-list-rename-app)
     (define-key map (kbd "f")   'pow-app-list-find-app-path)
     (define-key map (kbd "u")   'pow-app-list-mark-unmark)
     (define-key map (kbd "U")   'pow-app-list-mark-unmark-all)
