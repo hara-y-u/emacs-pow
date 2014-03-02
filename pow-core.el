@@ -1,6 +1,6 @@
 ;;; pow-core.el --- pow (http://pow.cx/) manager core component
 
-;; Copyright (c) 2013  Free Software Foundation, Inc.
+;; Copyright (c) 2014 yukihiro hara
 
 ;; Author: yukihiro hara <yukihr@gmail.com>
 
