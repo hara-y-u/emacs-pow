@@ -74,6 +74,9 @@ Letters do not insert themselves; instead, they are commands.
   (add-hook 'tabulated-list-revert-hook 'pow-app-list-refresh nil t)
   (tabulated-list-init-header))
 
+(defvar pow-app-list--view nil
+  "Reference to view object on pow-app-list-mode buffers.")
+
 
 ;; app-list-mode functions
 
@@ -175,9 +178,6 @@ Letters do not insert themselves; instead, they are commands.
   (let* ((list-view (apply 'pow-app-list-view--inner-make options))
          (buffer (pow-app-list-view-create-buffer list-view)))
     list-view))
-
-(defvar pow-app-list--view nil
-  "Reference to view object on pow-app-list-mode buffers.")
 
 (defun pow-app-list-view-create-buffer (list-view)
   "Create buffer for `pow-app-list-view'."
