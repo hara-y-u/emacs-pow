@@ -10,9 +10,9 @@ clean += $(compiledfiles)
 
 .PHONY: all test mostlyclean clean
 
-all: test compile
+all: test
 
-test: $(testlogs)
+test: compile $(testlogs)
 
 compile: $(compiledfiles)
 
