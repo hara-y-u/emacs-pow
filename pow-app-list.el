@@ -22,7 +22,7 @@
 
 (require 'pow-core)
 (require 'tabulated-list)
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 ;;
 ;; List View
@@ -167,7 +167,7 @@ Letters do not insert themselves; instead, they are commands.
 
 
 ;; View
-(defstruct (pow-app-list-view
+(cl-defstruct (pow-app-list-view
             (:constructor nil)
             (:constructor pow-app-list-view--inner-make))
   "View for convenience of manipulate `pow-app-list-mode'."

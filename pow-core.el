@@ -20,7 +20,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 ;;
 ;; customs
@@ -69,7 +69,7 @@
 
 (defun pow-same-file-p (&rest paths)
   "Check if all passed paths are pointing to same path."
-  (reduce #'(lambda (l r)
+  (cl-reduce #'(lambda (l r)
               (when (and
                      (stringp l) (stringp r)
                      (equal (file-truename l) (file-truename r)))
@@ -131,7 +131,7 @@ and then pass the output to `message'."
 
 ;; struct
 
-(defstruct (pow-app
+(cl-defstruct (pow-app
             (:constructor nil)
             (:constructor pow-app--inner-make))
   "A structure abstracting pow app symlinks."
@@ -238,8 +238,8 @@ options:
   "Load all pow apps in `symlink-directory'."
   (let* ((dir pow-symlink-directory)
          (symlinks (directory-files dir)))
-    (remove-if
-     #'nil
+    (cl-remove-if
+     #'null
      (mapcar
       #'(lambda (symlink)
           (let ((symlink-path (expand-file-name symlink dir)))
@@ -252,7 +252,7 @@ options:
 
 (defun pow-app-load-for-project (project-dir)
   "Load pow app for `project-dir'."
-  (remove-if #'(lambda (app)
+  (cl-remove-if #'(lambda (app)
                  (not (pow-same-file-p
                        (pow-app-path app) project-dir)))
              (pow-app-load-all)))
@@ -268,7 +268,7 @@ and pass it to `pow-app-load-for-project'."
 (defun pow-app-load-by-name (name)
   "Load pow app for `name'."
   (car
-   (remove-if #'(lambda (app)
+   (cl-remove-if #'(lambda (app)
                   (not (equal name (pow-app-name app))))
               (pow-app-load-all))))
 
@@ -309,7 +309,7 @@ and pass it to `pow-app-load-for-project'."
 (defmacro pow-interactive (&rest strategies)
   "Interactive with `strategies'."
   `(interactive
-    (list ,@(reduce
+    (list ,@(cl-reduce
              #'(lambda (mem val)
                  (if (member (car val) strategies)
                      (append mem (list (cadr val)))
@@ -406,7 +406,7 @@ shows prompt to choose one app from the apps."
                (completing-read (format "App Name(%s):" (car names))
                                 names nil t nil nil (car names)))
               (,app
-               (car (remove-if
+               (car (cl-remove-if
                      #'(lambda (--app)
                          (not
                           (equal (pow-app-name --app) name)))
