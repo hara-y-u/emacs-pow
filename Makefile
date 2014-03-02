@@ -2,11 +2,11 @@
 EMACS     = emacs --batch --quick --directory .
 WGET      = wget --timestamping
 DIRECTORY = http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/emacs-lisp/
-
 testtargets  = pow-core.el
 testlogs = test-pow-app-el.log
 compiledfiles = pow-core.elc pow-app-list.elc
 mostlyclean += $(testlogs)
+clean += $(compiledfiles)
 
 .PHONY: all test mostlyclean clean
 
