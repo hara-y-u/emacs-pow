@@ -298,49 +298,43 @@ and pass it to `pow-app-load-for-project'."
          (pow-error "App \"%s\" not found" name)
        (progn ,@body))))
 
-(defvar pow-interactive-strategies-list
-  `((:app-name (completing-read
-                "App name: "
-                (mapcar #'pow-app-name (pow-app-load-all))))
-    (:new-app-name (read-string "New app name:")))
-  "Strategies for reading string by `interactive'.")
+(eval-and-compile
+  (defvar pow-interactive-strategies
+    `((:app-name (completing-read
+                  "App name: "
+                  (mapcar #'pow-app-name (pow-app-load-all))))
+      (:new-app-name (read-string "New app name:")))
+    "Strategies for reading string by `interactive'."))
 
-(defun pow-interactive-strategies (&rest strategies)
-  "Select interactive strategies."
-  (reduce
-   #'(lambda (mem val)
-       (if (member (car val) strategies)
-           (append mem (list (cadr val)))
-         mem))
-   pow-interactive-strategies-list
-   :initial-value nil))
-
-(defmacro pow-interactive (&rest args)
+(defmacro pow-interactive (&rest strategies)
+  "Interactive with `strategies'."
   `(interactive
-    (list ,@(apply 'pow-interactive-strategies args))))
-
-(defmacro pow-interactive-app-name ()
-  "Call function interactively with completed app-name."
-  `(pow-interactive :app-name))
+    (list ,@(reduce
+             #'(lambda (mem val)
+                 (if (member (car val) strategies)
+                     (append mem (list (cadr val)))
+                   mem))
+             pow-interactive-strategies
+             :initial-value nil))))
 
 ;;;###autoload
 (defun pow-unregister-app (&optional name-or-app)
   "Unregister app specified by `name-or-app'."
-  (pow-interactive-app-name)
+  (pow-interactive :app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-delete app)))
 
 ;;;###autoload
 (defun pow-open-app (&optional name-or-app)
   "Open app specified by `name-or-app'."
-  (pow-interactive-app-name)
+  (pow-interactive :app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-open app)))
 
 ;;;###autoload
 (defun pow-restart-app (&optional name-or-app)
   "Restart app specified by `name-or-app'."
-  (pow-interactive-app-name)
+  (pow-interactive :app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-restart app)))
 

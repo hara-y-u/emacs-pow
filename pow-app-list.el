@@ -220,9 +220,11 @@ Letters do not insert themselves; instead, they are commands.
   (pop-to-buffer (pow-app-list-view-buffer list-view)))
 
 
-
 ;; user function
 
+;;;###autoload
+(defalias 'list-pow-apps 'pow-list-apps
+  "List all registered pow apps.")
 ;;;###autoload
 (defun pow-list-apps ()
   "List all registered pow apps."
@@ -231,8 +233,6 @@ Letters do not insert themselves; instead, they are commands.
     (pow-app-list-view-reload list-view)
     (pow-app-list-view-refresh list-view)
     (pow-app-list-view-show list-view)))
-(defalias 'list-pow-apps 'pow-list-apps)
-
 
 
 (provide 'pow-app-list)
