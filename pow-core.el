@@ -214,9 +214,10 @@ options:
 
 (defun pow-app-rename (app new-name)
   "Rename pow app symlink."
-  (pow-app-delete app)
-  (setf (pow-app-name app) new-name)
-  (pow-app-save app))
+  (let ((old-app (copy-pow-app app)))
+    (setf (pow-app-name app) new-name)
+    (pow-app-save app)
+    (pow-app-delete old-app)))
 
 (defun pow-app-restart (app)
   "Flag pow app to restart on next request."
