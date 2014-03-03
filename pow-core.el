@@ -136,7 +136,7 @@ and then pass the output to `message'."
             (:constructor pow-app--inner-make))
   "A structure abstracting pow app symlinks."
   (symlink-directory pow-symlink-directory)
-  path
+  (path "")
   (name "")
   )
 
@@ -161,7 +161,8 @@ options:
   "Set app name to last entry of the `path'."
   (let* ((path (pow-app-path app))
          (name (pow-filename-last-directory path)))
-    (setf (pow-app-name app) name)))
+    (when (not (null name))
+      (setf (pow-app-name app) name))))
 
 (defun pow-app-set-name-default (app)
   "Set app name to \"default\"."
