@@ -52,7 +52,7 @@
 ;; helper
 ;;
 
-(defun pow-rack-project-p (dir)
+(defun pow-rack-project-root-p (dir)
   "Check if the `dir' is rack project."
   (file-exists-p (expand-file-name "config.ru" dir)))
 
@@ -64,7 +64,7 @@
           ;;; copied from rinari.el
           (string-match "\\(^[[:alpha:]]:/$\\|^/[^\/]+:/?$\\|^/$\\)" dir))
          nil)
-        ((pow-rack-project-p dir) dir)
+        ((pow-rack-project-root-p dir) dir)
         (t (pow-rack-project-root-for-dir (replace-regexp-in-string "[^/]+/?$" "" dir)))))
 
 (defun pow-same-file-p (&rest paths)
@@ -185,7 +185,7 @@ options:
 
 (defun pow-app-validate (app)
   "Validate app"
-  (unless (pow-rack-project-p (pow-app-path app))
+  (unless (pow-rack-project-root-p (pow-app-path app))
     (signal 'pow-app-invalid-path
             (format "Path \"%s\" is not rack project" (pow-app-path app))))
   (unless (string-match "^\\([_-]\\|\\.\\|\\w\\)+$" (pow-app-name app))
