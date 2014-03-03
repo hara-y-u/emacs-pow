@@ -1,7 +1,7 @@
 # Test with emacs 24
 EMACS     = emacs --batch --quick --directory .
 testtargets  = pow-core.el
-testlogs = test-pow-app-el.log
+testlogs = test-pow-core-el.log
 compiledfiles = pow-core.elc pow-app-list.elc
 mostlyclean += $(testlogs)
 clean += $(compiledfiles)
