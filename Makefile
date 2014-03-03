@@ -6,19 +6,27 @@ compiledfiles = pow-core.elc pow-app-list.elc
 mostlyclean += $(testlogs)
 clean += $(compiledfiles)
 
-.PHONY: all test mostlyclean clean
+.PHONY: all test compile emacs-version mostlyclean clean
 
 all: test
 
-test: compile $(testlogs)
+test: emacs-version compile $(testlogs)
+
+emacs-version:
+	@echo **TESTING ENVIRONMENT**
+	@$(EMACS) --version
+	@echo
+
+test-%-el.log: test/test-%.el $(testtargets)
+	@echo **TEST START**
+	$(EMACS) --eval '(load-file "$<")' 2>&1 | tee $@
 
 compile: $(compiledfiles)
 
-test-%-el.log: test/test-%.el $(testtargets)
-	$(EMACS) --eval '(load-file "$<")' 2>&1 | tee $@
-
 .el.elc:
+	@echo **BYTE COMPILE**
 	$(EMACS) --batch --eval '(byte-compile-file "$<")'
+	@echo
 
 mostlyclean:
 	-rm -f $(mostlyclean)
