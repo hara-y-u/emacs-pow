@@ -46,6 +46,26 @@
   :type 'function
   :group 'pow)
 
+(defcustom pow-log-directory "~/Library/Logs/Pow/apps"
+  "Directory of pow apps logs."
+  :type 'directory
+  :group 'pow)
+
+
+
+;;
+;; buffer customizable variables
+;;
+
+(defvar pow-app-log-files
+  (list
+   'development "log/development.log"
+   'test        "log/test.log"
+   'production  "log/production.log")
+  "plist for log files of app.
+Create same-name buffer-local variable to customize this.")
+(make-variable-buffer-local 'pow-app-log-files)
+
 
 
 ;;
@@ -95,6 +115,15 @@ and then pass the output to `message'."
   "Return the last entry of path."
   (string-match "\\/\\([^\\/]+\\)\\/?$" path)
   (match-string 1 path))
+
+(defun pow-pair (lst)
+  "Make list to paired elements list."
+  (cond
+   ((null lst) nil)
+   ((eq (length lst) 1) (list lst))
+   (t (cons (list
+             (car lst) (cadr lst))
+            (pow-pair (cddr lst))))))
 
 
 
@@ -235,6 +264,17 @@ options:
                        (pow-app-name app)
                        path))))))
 
+(defun pow-app-log-path (app)
+  "Path of pow log for the `app'."
+  (expand-file-name (format "%s.log" (pow-app-name app))
+                    pow-log-directory))
+
+(defun pow-app-app-log-path (app app-log-kind)
+  "Path of app log for the `app'"
+  (expand-file-name
+   (plist-get pow-app-log-files app-log-kind)
+   (pow-app-path app)))
+
 (defun pow-app-load-all ()
   "Load all pow apps in `symlink-directory'."
   (let* ((dir pow-symlink-directory)
@@ -304,7 +344,14 @@ and pass it to `pow-app-load-for-project'."
     `((:app-name (completing-read
                   "App name: "
                   (mapcar #'pow-app-name (pow-app-load-all))))
-      (:new-app-name (read-string "New app name:")))
+      (:new-app-name (read-string "New app name:"))
+      (:app-log-kind (let ((def (symbol-name (car pow-app-log-files))))
+                       (completing-read
+                        (format "Log for(%s): " def)
+                        (mapcar #'(lambda (elm)
+                                    (symbol-name (car elm)))
+                                (pow-pair pow-app-log-files))
+                        nil nil nil nil def))))
     "Strategies for reading string by `interactive'."))
 
 (defmacro pow-interactive (&rest strategies)
@@ -345,6 +392,19 @@ and pass it to `pow-app-load-for-project'."
   (pow-interactive :app-name :new-app-name)
   (pow--with-name-or-app name-or-app app
     (pow-app-rename app new-app-name)))
+
+;;;###autoload
+(defun pow-find-log (&optional name-or-app)
+  (pow-interactive :app-name)
+  (pow--with-name-or-app name-or-app app
+    (find-file (pow-app-log-path app))))
+
+;;;###autoload
+(defun pow-find-app-log (&optional name-or-app app-log-kind)
+  (pow-interactive :app-name :app-log-kind)
+  (pow--with-name-or-app name-or-app app
+    (find-file
+     (pow-app-app-log-path app app-log-kind))))
 
 (defmacro pow-with-rack-project-root (root-path &rest body)
   "A macro verifies current-directory is in rack project,
@@ -431,6 +491,7 @@ shows prompt to choose one app from the apps."
   (interactive)
   (pow-with-current-app app (pow-open-app app)))
 
+;; TODO: use default app
 ;;;###autoload
 (defun pow-restart-current-app ()
   "Restart a pow app for current project."
@@ -439,6 +500,21 @@ shows prompt to choose one app from the apps."
     (pow-with-message-error
         (format "App \"%s\" will restart on next request" (pow-app-name app))
       (pow-restart-app app))))
+
+;; TODO: use default app
+;;;###autoload
+(defun pow-find-current-log ()
+  (interactive)
+  (pow-with-current-app app
+    (find-file (pow-app-log-path app))))
+
+;; TODO: use default app
+;;;###autoload
+(defun pow-find-current-app-log (&optional app-log-kind)
+  (pow-interactive :app-log-kind)
+  (pow-with-current-app app
+    (find-file
+     (pow-app-app-log-path app (intern app-log-kind)))))
 
 ;;;###autoload
 (defun pow-rename-current-app (&optional new-app-name)

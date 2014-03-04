@@ -101,6 +101,23 @@
     (pow-app-restart app)
     (should (file-exists-p txt))))
 
+(ert-deftest pow-app-log-path ()
+  (let ((app (make-pow-app :path testpath)))
+    (should (equal (pow-app-log-path app)
+                  (expand-file-name "~/Library/Logs/Pow/apps/rack-app.log")))))
+
+(ert-deftest pow-app-app-log-path ()
+  (let ((app (make-pow-app :path testpath)))
+    (should (equal (pow-app-app-log-path app 'development)
+                   (expand-file-name "log/development.log"
+                                     testpath)))
+    (should (equal (pow-app-app-log-path app 'test)
+                   (expand-file-name "log/test.log"
+                                     testpath)))
+    (should (equal (pow-app-app-log-path app 'production)
+                   (expand-file-name "log/production.log"
+                                     testpath)))))
+
 
 (ert-run-tests-batch)
 
