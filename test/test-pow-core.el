@@ -18,13 +18,12 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
+(setq pow-symlink-directory "./test/.pow")
+
 (require 'ert)
 (require 'pow-core)
 
-(defvar testdir "emacs-pow-test-project-20140303")
-(defvar testpath (expand-file-name testdir "~/"))
-(make-directory testpath 'parent)
-(write-region "" nil (expand-file-name "config.ru" testpath) nil 'quiet)
+(defvar testpath (expand-file-name "./test/rack-app"))
 
 ;; pow-app
 (ert-deftest make-pow-app ()
@@ -48,7 +47,7 @@
   (let ((app (make-pow-app :path testpath
                            :name "test-app")))
     (should (pow-same-file-p
-             "~/.pow/test-app"
+             (expand-file-name "test-app" pow-symlink-directory)
              (pow-app-symlink-path app)))))
 
 (ert-deftest pow-app-validate-with-no-args ()
@@ -105,5 +104,4 @@
 
 (ert-run-tests-batch)
 
-(delete-directory testpath 'rec)
 (makunbound 'testpath)
