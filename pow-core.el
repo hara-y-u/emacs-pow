@@ -476,6 +476,14 @@ shows prompt to choose one app from the apps."
              (progn ,@body)
            (pow-error "App \"%s\" is not found" name))))))
 
+(defmacro pow-with-current-one-app (app &rest body)
+  "Execute `body' with one of apps of current project.
+App to be chosen is indefinite."
+  (declare (indent 1))
+  `(pow-with-current-apps apps
+     (let ((,app (car apps)))
+       (progn ,@body))))
+
 ;;;###autoload
 (defun pow-unregister-current-app ()
   "Unregister a pow app for current project."
@@ -491,28 +499,25 @@ shows prompt to choose one app from the apps."
   (interactive)
   (pow-with-current-app app (pow-open-app app)))
 
-;; TODO: use default app
 ;;;###autoload
 (defun pow-restart-current-app ()
   "Restart a pow app for current project."
   (interactive)
-  (pow-with-current-app app
+  (pow-with-current-one-app app
     (pow-with-message-error
         (format "App \"%s\" will restart on next request" (pow-app-name app))
       (pow-restart-app app))))
 
-;; TODO: use default app
 ;;;###autoload
 (defun pow-find-current-log ()
   (interactive)
-  (pow-with-current-app app
+  (pow-with-current-one-app app
     (find-file (pow-app-log-path app))))
 
-;; TODO: use default app
 ;;;###autoload
 (defun pow-find-current-app-log (&optional app-log-kind)
   (pow-interactive :app-log-kind)
-  (pow-with-current-app app
+  (pow-with-current-one-app app
     (find-file
      (pow-app-app-log-path app (intern app-log-kind)))))
 
