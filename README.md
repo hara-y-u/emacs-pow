@@ -36,7 +36,7 @@ And `M-x pow-open-current-app` to open the project app in browser.
 
 `M-x pow-restart-current-app` will flag `restart` current app.
 
-`M-x list-pow-apps` lists all registered pow apps (only emacs-version >= 24 is supported).
+`M-x list-pow-apps` lists all registered pow apps.
 
 
 For other command reference, try exec `M-x apropos-command RET pow-`.
