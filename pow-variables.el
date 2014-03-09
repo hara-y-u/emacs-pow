@@ -50,6 +50,16 @@
   :type 'directory
   :group 'pow)
 
+(defcustom pow-default-network-device "en0"
+  "Defalut network device to use within apps development."
+  :type 'string
+  :group 'pow)
+
+(defcustom pow-url-for-remote-format "http://%s.%s.xip.io/"
+  "Url format for remote host of rack application registered on Pow. This is passed to format function with two arguments: app name and ip address."
+  :type 'string
+  :group 'pow)
+
 
 ;;
 ;; buffer customizable variables

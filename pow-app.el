@@ -93,8 +93,14 @@ options:
   (setf (pow-app-name app) "default"))
 
 (defun pow-app-url (app)
-  "Gertter for url of the pow app."
+  "Getter for url of the pow app."
   (format pow-url-format (pow-app-name app)))
+
+(defun pow-app-url-for-remote (app)
+  "Returns app url for remote hosts."
+  (format pow-url-for-remote-format
+          (pow-app-name app)
+          (pow-local-ip-address-string)))
 
 (defun pow-app-open (app)
   "Open pow app url with function referenced by `pow-browse-url-function'."

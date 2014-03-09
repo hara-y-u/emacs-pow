@@ -21,6 +21,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'pow-variables)
 
 
 (defun pow-rack-project-root-p (dir)
@@ -75,6 +76,14 @@ and then pass the output to `message'."
    (t (cons (list
              (car lst) (cadr lst))
             (pow-pair (cddr lst))))))
+
+(defun pow-local-ip-address-string ()
+  "Returns local ip address in format like \"192.168.0.1\".
+Device specified by `pow-default-network-device' will used."
+  (format-network-address
+   (assoc-default pow-default-network-device
+                  (network-interface-list))
+   'omit-port))
 
 
 (provide 'pow-helpers)
