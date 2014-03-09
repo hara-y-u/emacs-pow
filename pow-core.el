@@ -401,6 +401,15 @@ and pass it to `pow-app-load-for-project'."
     (pow-app-open app)))
 
 ;;;###autoload
+(defun pow-copy-url-for-remote (&optional name-or-app)
+  "Copy remote accessible url to clipboard."
+  (pow-interactive :app-name)
+  (pow--with-name-or-app name-or-app app
+    (with-temp-buffer
+      (insert (pow-app-url-for-remote app))
+      (clipboard-kill-region (point-min) (point-max)))))
+
+;;;###autoload
 (defun pow-restart-app (&optional name-or-app)
   "Restart app specified by `name-or-app'."
   (pow-interactive :app-name)
@@ -519,6 +528,13 @@ App to be chosen is indefinite."
   "Open a pow app for current project."
   (interactive)
   (pow-with-current-app app (pow-open-app app)))
+
+;;;###autoload
+(defun pow-copy-current-app-url-for-remote ()
+  "Copy remote accessible url of current app to clipboard."
+  (interactive)
+  (pow-with-current-app app
+    (pow-copy-url-for-remote app)))
 
 ;;;###autoload
 (defun pow-restart-current-app ()
