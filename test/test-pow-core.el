@@ -18,10 +18,14 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
+(add-to-list 'load-path "./test")
+
 (setq pow-symlink-directory "./test/.pow")
 
 (require 'ert)
+(require 'mocker)
 (require 'pow-core)
+(require 'cl-lib)
 
 (defvar testpath (expand-file-name "./test/rack-app"))
 
@@ -42,6 +46,14 @@
 (ert-deftest pow-app-url ()
   (let ((app (make-pow-app :path "/home/huga/proj/hoge")))
     (should (equal (pow-app-url app) "http://hoge.dev/"))))
+
+(ert-deftest pow-app-url-for-remote ()
+  (let ((app (make-pow-app :path "/home/huga/proj/hoge")))
+    (mocker-let ((pow-local-ip-address-string
+                  ()
+                  ((:output "10.0.0.3"))))
+      (should (equal (pow-app-url-for-remote app)
+                     "http://hoge.10.0.0.3.xip.io/")))))
 
 (ert-deftest pow-app-symlink-path ()
   (let ((app (make-pow-app :path testpath

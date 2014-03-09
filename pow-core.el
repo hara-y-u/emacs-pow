@@ -51,7 +51,15 @@
   :type 'directory
   :group 'pow)
 
+(defcustom pow-default-network-device "en0"
+  "Defalut network device to use within apps development."
+  :type 'string
+  :group 'pow)
 
+(defcustom pow-url-for-remote-format "http://%s.%s.xip.io/"
+  "Url format for remote host of rack application registered on Pow. This is passed to format function with two arguments: app name and ip address."
+  :type 'string
+  :group 'pow)
 
 ;;
 ;; buffer customizable variables
@@ -125,6 +133,13 @@ and then pass the output to `message'."
              (car lst) (cadr lst))
             (pow-pair (cddr lst))))))
 
+(defun pow-local-ip-address-string ()
+  "Returns local ip address in format like \"192.168.0.1\".
+Device specified by `pow-default-network-device' will used."
+  (format-network-address
+   (assoc-default pow-default-network-device
+                  (network-interface-list))
+   'omit-port))
 
 
 ;;
@@ -198,8 +213,14 @@ options:
   (setf (pow-app-name app) "default"))
 
 (defun pow-app-url (app)
-  "Gertter for url of the pow app."
+  "Getter for url of the pow app."
   (format pow-url-format (pow-app-name app)))
+
+(defun pow-app-url-for-remote (app)
+  "Returns app url for remote hosts."
+  (format pow-url-for-remote-format
+          (pow-app-name app)
+          (pow-local-ip-address-string)))
 
 (defun pow-app-open (app)
   "Open pow app url with function referenced by `pow-browse-url-function'."
@@ -380,6 +401,15 @@ and pass it to `pow-app-load-for-project'."
     (pow-app-open app)))
 
 ;;;###autoload
+(defun pow-copy-url-for-remote (&optional name-or-app)
+  "Copy remote accessible url to clipboard."
+  (pow-interactive :app-name)
+  (pow--with-name-or-app name-or-app app
+    (with-temp-buffer
+      (insert (pow-app-url-for-remote app))
+      (clipboard-kill-region (point-min) (point-max)))))
+
+;;;###autoload
 (defun pow-restart-app (&optional name-or-app)
   "Restart app specified by `name-or-app'."
   (pow-interactive :app-name)
@@ -498,6 +528,13 @@ App to be chosen is indefinite."
   "Open a pow app for current project."
   (interactive)
   (pow-with-current-app app (pow-open-app app)))
+
+;;;###autoload
+(defun pow-copy-current-app-url-for-remote ()
+  "Copy remote accessible url of current app to clipboard."
+  (interactive)
+  (pow-with-current-app app
+    (pow-copy-url-for-remote app)))
 
 ;;;###autoload
 (defun pow-restart-current-app ()
