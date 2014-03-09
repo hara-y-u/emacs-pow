@@ -23,7 +23,8 @@
 
 ;;; Code:
 
-(require 'pow-core)
+(require 'pow-app)
+(require 'pow-interactive)
 (require 'pow-app-list)
 
 (provide 'pow)

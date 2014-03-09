@@ -20,7 +20,8 @@
 
 ;;; Code:
 
-(require 'pow-core)
+(require 'pow-app)
+(require 'pow-interactive)
 (require 'tabulated-list)
 (require 'cl-lib)
 

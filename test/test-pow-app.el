@@ -21,7 +21,7 @@
 (setq pow-symlink-directory "./test/.pow")
 
 (require 'ert)
-(require 'pow-core)
+(require 'pow-app)
 
 (defvar testpath (expand-file-name "./test/rack-app"))
 
