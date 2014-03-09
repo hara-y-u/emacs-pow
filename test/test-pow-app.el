@@ -23,8 +23,8 @@
 (setq pow-symlink-directory "./test/.pow")
 
 (require 'ert)
+(require 'pow-app)
 (require 'mocker)
-(require 'pow-core)
 (require 'cl-lib)
 
 (defvar testpath (expand-file-name "./test/rack-app"))
