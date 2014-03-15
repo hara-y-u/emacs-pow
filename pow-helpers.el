@@ -1,4 +1,4 @@
-;;; pow-helpers.el --- pow (http://pow.cx/) manager helper functions
+;;; pow-helpers.el --- pow (http://pow.cx/) manager helper macros/functions
 
 ;; Copyright (c) 2014 yukihiro hara
 
@@ -23,6 +23,102 @@
 (require 'cl-lib)
 (require 'pow-variables)
 
+
+;;
+;; Macros
+;;
+
+(defmacro pow--with-name-or-app (name-or-app app &rest body)
+  "An macro receives `name-or-app' arg and call `body' certainly with `app'."
+  (declare (indent 2))
+  `(let (,app name)
+     (if (pow-app-p ,name-or-app)
+         (setq ,app ,name-or-app name (pow-app-name ,name-or-app))
+       (setq ,app (pow-app-load-by-name ,name-or-app)
+             name ,name-or-app))
+     (if (null ,app)
+         (pow-error "App \"%s\" not found" name)
+       (progn ,@body))))
+
+(eval-and-compile
+  (defvar pow-interactive-strategies
+    `((:app-name (completing-read
+                  "App name: "
+                  (mapcar #'pow-app-name (pow-app-load-all))))
+      (:new-app-name (read-string "New app name:"))
+      (:app-log-kind (let ((def (symbol-name (car pow-app-log-files))))
+                       (completing-read
+                        (format "Log for(%s): " def)
+                        (mapcar #'(lambda (elm)
+                                    (symbol-name (car elm)))
+                                (pow-pair pow-app-log-files))
+                        nil nil nil nil def))))
+    "Strategies for reading string by `interactive'."))
+
+(defmacro pow-interactive (&rest strategies)
+  "Interactive with `strategies'."
+  `(interactive
+    (list ,@(cl-reduce
+             #'(lambda (mem val)
+                 (if (member (car val) strategies)
+                     (append mem (list (cadr val)))
+                   mem))
+             pow-interactive-strategies
+             :initial-value nil))))
+
+(defmacro pow-with-message-error (message-on-success &rest body)
+  "A macro translates errors to error message for interactive fns."
+  (declare (indent 1))
+  `(condition-case err
+       (progn
+         ,@body
+         (unless (null ,message-on-success)
+           (pow-message ,message-on-success)))
+     (error (pow-error (cdr err)))))
+
+(defmacro pow-with-current-apps (apps &rest body)
+  "Execute `body' with `apps' of current project."
+  (declare (indent 1))
+  `(let ((,apps (pow-app-load-for-dir default-directory)))
+     (if (not (null ,apps))
+         (progn ,@body)
+       (pow-error "App for current project was not found"))))
+
+(defmacro pow-with-current-app (app &rest body)
+  "Execute `body' with an `app' of current project.
+If there is many app registered for the current project,
+shows prompt to choose one app from the apps."
+  (declare (indent 1))
+  `(pow-with-current-apps apps
+     (if (eq (length apps) 1)
+         (let ((,app (car apps)))
+           (progn ,@body))
+       (let* ((names (mapcar #'(lambda (-app) (pow-app-name -app)) apps))
+              (name
+               (completing-read (format "App Name(%s):" (car names))
+                                names nil t nil nil (car names)))
+              (,app
+               (car (cl-remove-if
+                     #'(lambda (--app)
+                         (not
+                          (equal (pow-app-name --app) name)))
+                     apps))))
+         (if (not (null ,app))
+             (progn ,@body)
+           (pow-error "App \"%s\" is not found" name))))))
+
+(defmacro pow-with-current-one-app (app &rest body)
+  "Execute `body' with one of apps of current project.
+App to be chosen is indefinite."
+  (declare (indent 1))
+  `(pow-with-current-apps apps
+     (let ((,app (car apps)))
+       (progn ,@body))))
+
+
+;;
+;; Functions
+;;
 
 (defun pow-rack-project-root-p (dir)
   "Check if the `dir' is rack project."

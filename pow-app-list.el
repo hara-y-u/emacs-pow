@@ -21,7 +21,7 @@
 ;;; Code:
 
 (require 'pow-app)
-(require 'pow-interactive)
+(require 'pow-helpers)
 (require 'tabulated-list)
 (require 'cl-lib)
 
