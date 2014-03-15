@@ -18,11 +18,22 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
+;;; TODO:
+;;; limit line number
+
 ;;; Code:
 
 (require 'pow-helpers)
 (require 'pow-app)
 (require 'cl-lib)
+
+(defun pow-tail-log-colorize-buffer ()
+  "copied from emacs-rails"
+  (let ((buffer (current-buffer)))
+    (make-local-variable 'after-change-functions)
+    (add-hook 'after-change-functions
+              '(lambda (start end len)
+                 (ansi-color-apply-on-region start end)))))
 
 (defun pow-tail-log-buffer-name (log-path)
   (format "*pow tail log:%s*" (pow-filename log-path)))
@@ -36,7 +47,8 @@
         (setq buffer (generate-new-buffer buffer-name))
         (with-current-buffer buffer
           (setq auto-window-vscroll t)
-          (setq buffer-read-only t))
+          (setq buffer-read-only t)
+          (pow-tail-log-colorize-buffer))
         (start-process "pow tail log"
                        buffer
                        "tail"
