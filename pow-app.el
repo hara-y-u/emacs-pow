@@ -84,7 +84,7 @@ options:
 (defun pow-app-set-name-with-path (app)
   "Set app name to last entry of the `path'."
   (let* ((path (pow-app-path app))
-         (name (pow-filename-last-directory path)))
+         (name (pow-filename path)))
     (when (not (null name))
       (setf (pow-app-name app) name))))
 

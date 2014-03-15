@@ -159,7 +159,7 @@ and then pass the output to `message'."
   "User error utility. format-string and rest args are passed to `user-error'."
   (apply 'user-error (concat "Pow: " format-string) args))
 
-(defun pow-filename-last-directory (path)
+(defun pow-filename (path)
   "Return the last entry of path."
   (string-match "\\/\\([^\\/]+\\)\\/?$" path)
   (match-string 1 path))

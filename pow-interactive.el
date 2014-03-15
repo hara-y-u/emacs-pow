@@ -103,7 +103,7 @@ and call `body' with project\'s `root-path'."
   (interactive)
   (pow-with-rack-project-root path
     (let (app
-          (appname (pow-filename-last-directory path)))
+          (appname (pow-filename path)))
       (when (null name)
           (setq name (read-string (format "App Name(%s):" appname)
                                   nil nil appname)))
