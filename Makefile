@@ -2,7 +2,7 @@
 EMACS     = emacs --batch --quick --directory .
 testtargets  = pow-app.el
 testlogs = test-pow-app-el.log
-compiledfiles = pow-variables.elc pow-helpers.elc pow-app.elc pow-interactive.elc pow-app-list.elc pow.elc
+compiledfiles = pow-variables.elc pow-helpers.elc pow-app.elc pow-interactive.elc pow-app-list.elc pow-tail-log.elc pow.elc
 mostlyclean += $(testlogs)
 clean += $(compiledfiles)
 
