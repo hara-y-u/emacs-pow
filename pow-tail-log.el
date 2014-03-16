@@ -38,6 +38,7 @@
   :group 'pow)
 
 (defun pow-tail-log-process-filter (proc string)
+  "Filter function for \"pow tail log\" process."
   (let ((buffer (process-buffer proc)))
     (when (buffer-live-p buffer)
       (with-current-buffer buffer
@@ -60,11 +61,11 @@
           (if move-p (goto-char (process-mark proc))))))))
 
 (defun pow-tail-log-buffer-name (log-path &optional app-name)
-    (format "*%s:%s* - pow tail log"
+    (format "*%s:%s - pow tail log*"
             (or app-name "pow app")
             (pow-filename log-path)))
 
-(defun pow-tail-log-start (app log-path)
+(defun pow--tail-log-start (app log-path)
   (let* ((buffer-name
           (pow-tail-log-buffer-name log-path (pow-app-name app)))
          (buffer (get-buffer buffer-name)))
@@ -82,24 +83,41 @@
                        "-n" "100"
                        "-f" (expand-file-name log-path))))))
 
-(defun pow--tail-log (app log-path)
-  (interactive "fLog file:")
-  (let ((tail-process (pow-tail-log-start app log-path)))
+(defun pow-tail-log-start (app log-path)
+  "Show buffor for \"pow tail log\" process.
+If buffer dosen't exist, create one and start process for it."
+  (let ((tail-process (pow--tail-log-start app log-path)))
     (set-process-filter tail-process #'pow-tail-log-process-filter)
     (funcall pow-tail-log-display-buffer-fn (process-buffer tail-process))))
 
 ;;;###autoload
 (defun pow-tail-log (&optional name-or-app)
+  "Tail log for `name-or-app', for monitoring purpose."
   (pow-interactive :app-name)
   (pow--with-name-or-app name-or-app app
-    (pow--tail-log app (pow-app-log-path app))))
+    (pow-tail-log-start app (pow-app-log-path app))))
 
 ;;;###autoload
 (defun pow-tail-app-log (&optional name-or-app app-log-kind)
+  "Tail app log for `name-or-app', for monitoring purpose."
   (pow-interactive :app-name :app-log-kind)
   (pow--with-name-or-app name-or-app app
-    (pow--tail-log app
+    (pow-tail-log-start app
      (pow-app-app-log-path app app-log-kind))))
+
+;;;###autoload
+(defun pow-tail-current-log ()
+  "Tail log for current app, for monitoring purpose."
+  (interactive)
+  (pow-with-current-app app
+    (pow-tail-log app)))
+
+;;;###autoload
+(defun pow-tail-current-app-log (&optional app-log-kind)
+  "Tail app log for current app, for monitoring purpose."
+  (pow-interactive :app-log-kind)
+  (pow-with-current-app app
+    (pow-tail-app-log app app-log-kind)))
 
 (provide 'pow-tail-log)
 ;;;pow-tail-log.el ends here
