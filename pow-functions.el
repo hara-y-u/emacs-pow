@@ -159,7 +159,7 @@ and call `body' with project\'s `root-path'."
   (pow-interactive :app-log-kind)
   (pow-with-current-one-app app
     (find-file
-     (pow-app-app-log-path app (intern app-log-kind)))))
+     (pow-app-app-log-path app app-log-kind))))
 
 ;;;###autoload
 (defun pow-rename-current-app (&optional new-app-name)
