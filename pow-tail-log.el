@@ -1,4 +1,4 @@
-;;; pow-log.el --- pow (http://pow.cx/) tail log view component
+;;; pow-tail-log.el --- pow (http://pow.cx/) tail log view component
 
 ;; Copyright (c) 2014 yukihiro hara
 
@@ -23,6 +23,7 @@
 
 ;;; Code:
 
+(require 'ansi-color)
 (require 'pow-helpers)
 (require 'pow-app)
 (require 'cl-lib)
