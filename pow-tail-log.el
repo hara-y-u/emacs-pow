@@ -80,9 +80,23 @@
                        "-n" "100"
                        "-f" (expand-file-name log-path))))))
 
-;;;###autoload
-(defun pow-tail-log (&optional log-path app-name)
+(defun pow--tail-log (&optional log-path app-name)
   (interactive "fLog file:")
   (let ((tail-process (pow-tail-log-start log-path app-name)))
     (set-process-filter tail-process #'pow-tail-log-process-filter)
     (funcall pow-tail-log-display-buffer-fn (process-buffer tail-process))))
+
+;;;###autoload
+(defun pow-tail-log (&optional name-or-app)
+  (pow-interactive :app-name)
+  (pow--with-name-or-app name-or-app app
+    (pow--tail-log
+     (pow-app-log-path app) (pow-app-name app))))
+
+;;;###autoload
+(defun pow-tail-app-log (&optional name-or-app app-log-kind)
+  (pow-interactive :app-name :app-log-kind)
+  (pow--with-name-or-app name-or-app app
+    (pow--tail-log
+     (pow-app-app-log-path app (intern app-log-kind))
+     (pow-app-name app))))
