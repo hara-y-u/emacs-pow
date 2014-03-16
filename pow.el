@@ -25,6 +25,7 @@
 
 (require 'pow-interactive)
 (require 'pow-app-list)
+(require 'pow-tail-log)
 
 (provide 'pow)
 ;;; pow.el ends here

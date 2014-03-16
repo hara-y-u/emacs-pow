@@ -47,12 +47,13 @@
                   (mapcar #'pow-app-name (pow-app-load-all))))
       (:new-app-name (read-string "New app name:"))
       (:app-log-kind (let ((def (symbol-name (car pow-app-log-files))))
-                       (completing-read
-                        (format "Log for(%s): " def)
-                        (mapcar #'(lambda (elm)
-                                    (symbol-name (car elm)))
-                                (pow-pair pow-app-log-files))
-                        nil nil nil nil def))))
+                       (intern
+                        (completing-read
+                         (format "Log for(%s): " def)
+                         (mapcar #'(lambda (elm)
+                                     (symbol-name (car elm)))
+                                 (pow-pair pow-app-log-files))
+                         nil nil nil nil def)))))
     "Strategies for reading string by `interactive'."))
 
 (defmacro pow-interactive (&rest strategies)
@@ -159,7 +160,7 @@ and then pass the output to `message'."
   "User error utility. format-string and rest args are passed to `user-error'."
   (apply 'user-error (concat "Pow: " format-string) args))
 
-(defun pow-filename-last-directory (path)
+(defun pow-filename (path)
   "Return the last entry of path."
   (string-match "\\/\\([^\\/]+\\)\\/?$" path)
   (match-string 1 path))
