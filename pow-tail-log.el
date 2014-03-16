@@ -19,7 +19,7 @@
 ;; Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 ;;; TODO:
-;;; limit line number
+;;  Minor mode for buffer
 
 ;;; Code:
 
@@ -27,19 +27,45 @@
 (require 'pow-app)
 (require 'cl-lib)
 
-(defun pow-tail-log-colorize-buffer ()
-  "copied from emacs-rails"
-  (let ((buffer (current-buffer)))
-    (make-local-variable 'after-change-functions)
-    (add-hook 'after-change-functions
-              '(lambda (start end len)
-                 (ansi-color-apply-on-region start end)))))
+(defcustom pow-tail-log-max-num-lines 200
+  "Max number of lines for tail log buffer."
+  :type 'integer
+  :group 'pow)
 
-(defun pow-tail-log-buffer-name (log-path)
-  (format "*pow tail log:%s*" (pow-filename log-path)))
+(defcustom pow-tail-log-display-buffer-fn #'pop-to-buffer
+  "Function to display tail log buffer."
+  :type 'function
+  :group 'pow)
 
-(defun pow-tail-log-start (log-path)
-  (let* ((buffer-name (pow-tail-log-buffer-name log-path))
+(defun pow-tail-log-process-filter (proc string)
+  (let ((buffer (process-buffer proc)))
+    (when (buffer-live-p buffer)
+      (with-current-buffer buffer
+        (let (num-lines
+              (move-p (= (point) (process-mark proc))))
+          (save-excursion
+            (setq buffer-read-only nil)
+            (buffer-disable-undo)
+            (goto-char (point-max))
+            (insert string)
+            (setq num-lines (count-lines (point-min) (point-max)))
+            (save-excursion
+              (when (< pow-tail-log-max-num-lines num-lines)
+                (goto-char (point-min))
+                (forward-line (- num-lines pow-tail-log-max-num-lines))
+                (delete-region (point-min) (point))))
+            (ansi-color-apply-on-region (process-mark proc)
+                                        (point-max))
+            (set-marker (process-mark proc) (point)))
+          (if move-p (goto-char (process-mark proc))))))))
+
+(defun pow-tail-log-buffer-name (log-path &optional app-name)
+    (format "*%s:%s* - pow tail log"
+            (or app-name "pow app")
+            (pow-filename log-path)))
+
+(defun pow-tail-log-start (log-path &optional app-name)
+  (let* ((buffer-name (pow-tail-log-buffer-name log-path app-name))
          (buffer (get-buffer buffer-name)))
     (if buffer
         (get-buffer-process buffer)
@@ -47,16 +73,16 @@
         (setq buffer (generate-new-buffer buffer-name))
         (with-current-buffer buffer
           (setq auto-window-vscroll t)
-          (setq buffer-read-only t)
-          (pow-tail-log-colorize-buffer))
+          (setq buffer-read-only t))
         (start-process "pow tail log"
                        buffer
                        "tail"
-                       "-n" "20"
+                       "-n" "100"
                        "-f" (expand-file-name log-path))))))
 
 ;;;###autoload
-(defun pow-tail-log (&optional log-path)
+(defun pow-tail-log (&optional log-path app-name)
   (interactive "fLog file:")
-  (let ((tail-process (pow-tail-log-start log-path)))
-    (pop-to-buffer (process-buffer tail-process))))
+  (let ((tail-process (pow-tail-log-start log-path app-name)))
+    (set-process-filter tail-process #'pow-tail-log-process-filter)
+    (funcall pow-tail-log-display-buffer-fn (process-buffer tail-process))))
