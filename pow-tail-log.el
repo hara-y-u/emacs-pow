@@ -64,8 +64,9 @@
             (or app-name "pow app")
             (pow-filename log-path)))
 
-(defun pow-tail-log-start (log-path &optional app-name)
-  (let* ((buffer-name (pow-tail-log-buffer-name log-path app-name))
+(defun pow-tail-log-start (app log-path)
+  (let* ((buffer-name
+          (pow-tail-log-buffer-name log-path (pow-app-name app)))
          (buffer (get-buffer buffer-name)))
     (if buffer
         (get-buffer-process buffer)
@@ -73,16 +74,17 @@
         (setq buffer (generate-new-buffer buffer-name))
         (with-current-buffer buffer
           (setq auto-window-vscroll t)
-          (setq buffer-read-only t))
+          (setq buffer-read-only t)
+          (setq default-directory (pow-app-path app)))
         (start-process "pow tail log"
                        buffer
                        "tail"
                        "-n" "100"
                        "-f" (expand-file-name log-path))))))
 
-(defun pow--tail-log (&optional log-path app-name)
+(defun pow--tail-log (app log-path)
   (interactive "fLog file:")
-  (let ((tail-process (pow-tail-log-start log-path app-name)))
+  (let ((tail-process (pow-tail-log-start app log-path)))
     (set-process-filter tail-process #'pow-tail-log-process-filter)
     (funcall pow-tail-log-display-buffer-fn (process-buffer tail-process))))
 
@@ -90,16 +92,14 @@
 (defun pow-tail-log (&optional name-or-app)
   (pow-interactive :app-name)
   (pow--with-name-or-app name-or-app app
-    (pow--tail-log
-     (pow-app-log-path app) (pow-app-name app))))
+    (pow--tail-log app (pow-app-log-path app))))
 
 ;;;###autoload
 (defun pow-tail-app-log (&optional name-or-app app-log-kind)
   (pow-interactive :app-name :app-log-kind)
   (pow--with-name-or-app name-or-app app
-    (pow--tail-log
-     (pow-app-app-log-path app app-log-kind)
-     (pow-app-name app))))
+    (pow--tail-log app
+     (pow-app-app-log-path app app-log-kind))))
 
 (provide 'pow-tail-log)
 ;;;pow-tail-log.el ends here
