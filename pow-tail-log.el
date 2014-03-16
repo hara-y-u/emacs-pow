@@ -98,5 +98,8 @@
   (pow-interactive :app-name :app-log-kind)
   (pow--with-name-or-app name-or-app app
     (pow--tail-log
-     (pow-app-app-log-path app (intern app-log-kind))
+     (pow-app-app-log-path app app-log-kind)
      (pow-app-name app))))
+
+(provide 'pow-tail-log)
+;;;pow-tail-log.el ends here

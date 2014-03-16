@@ -86,7 +86,7 @@
   (pow-interactive :app-name :app-log-kind)
   (pow--with-name-or-app name-or-app app
     (find-file
-     (pow-app-app-log-path app (intern app-log-kind)))))
+     (pow-app-app-log-path app app-log-kind))))
 
 (defmacro pow-with-rack-project-root (root-path &rest body)
   "A macro verifies current-directory is in rack project,

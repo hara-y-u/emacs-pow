@@ -47,12 +47,13 @@
                   (mapcar #'pow-app-name (pow-app-load-all))))
       (:new-app-name (read-string "New app name:"))
       (:app-log-kind (let ((def (symbol-name (car pow-app-log-files))))
-                       (completing-read
-                        (format "Log for(%s): " def)
-                        (mapcar #'(lambda (elm)
-                                    (symbol-name (car elm)))
-                                (pow-pair pow-app-log-files))
-                        nil nil nil nil def))))
+                       (intern
+                        (completing-read
+                         (format "Log for(%s): " def)
+                         (mapcar #'(lambda (elm)
+                                     (symbol-name (car elm)))
+                                 (pow-pair pow-app-log-files))
+                         nil nil nil nil def)))))
     "Strategies for reading string by `interactive'."))
 
 (defmacro pow-interactive (&rest strategies)
