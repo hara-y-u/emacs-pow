@@ -81,7 +81,7 @@
         (start-process "pow tail log"
                        buffer
                        "tail"
-                       "-n" "100"
+                       "-n" (number-to-string pow-tail-log-max-num-lines)
                        "-f" (expand-file-name log-path))))))
 
 (defun pow-tail-log-start (app log-path)
