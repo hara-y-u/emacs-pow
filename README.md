@@ -28,13 +28,15 @@ TODO
     ```
 
 
-## Simple Usage
+## Basic Usage
 
 To regsister your rack project to pow, exec `M-x pow-register-current-app` in your project.
 
-And `M-x pow-open-current-app` to open the project app in browser.
+And, `M-x pow-open-current-app` to open the project app in browser.
 
 `M-x pow-restart-current-app` will flag `restart` current app.
+
+`M-x pow-tail-current-log` will open `tail` buffer for app's Pow log.
 
 `M-x list-pow-apps` lists all registered pow apps.
 
@@ -56,6 +58,19 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 | Mark app as _delete_ | `pow-app-list-mark-delete`     | <kbd>d</kbd>                   |
 | Execute mark         | `pow-app-list-execute`         | <kbd>x</kbd>                   |
 | Refresh buffer       | `pow-app-list-refresh`         | <kbd>r</kbd>                   |
+
+
+## Sample Settings
+
+### Use with [`projectile-rails`](https://github.com/asok/projectile-rails)
+
+```cl
+(require 'pow)
+(define-key projectile-rails-mode-map (kbd "C-c ; w") 'pow-restart-current-app)
+(define-key projectile-rails-mode-map (kbd "C-c ; o") 'pow-open-current-app)
+(define-key projectile-rails-mode-map (kbd "C-c ; f l") 'pow-tail-current-log)
+(define-key projectile-rails-mode-map (kbd "C-c ; f L") 'pow-tail-current-app-log)
+```
 
 
 ## Contributing
