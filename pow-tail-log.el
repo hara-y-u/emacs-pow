@@ -45,9 +45,9 @@
       (with-current-buffer buffer
         (let (num-lines
               (move-p (= (point) (process-mark proc))))
+          (setq buffer-read-only nil)
+          (buffer-disable-undo)
           (save-excursion
-            (setq buffer-read-only nil)
-            (buffer-disable-undo)
             (goto-char (point-max))
             (insert string)
             (setq num-lines (count-lines (point-min) (point-max)))
@@ -59,6 +59,8 @@
             (ansi-color-apply-on-region (process-mark proc)
                                         (point-max))
             (set-marker (process-mark proc) (point)))
+          (setq buffer-read-only t)
+          (buffer-enable-undo)
           (if move-p (goto-char (process-mark proc))))))))
 
 (defun pow-tail-log-buffer-name (log-path &optional app-name)
