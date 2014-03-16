@@ -110,14 +110,14 @@ If buffer dosen't exist, create one and start process for it."
 (defun pow-tail-current-log ()
   "Tail log for current app, for monitoring purpose."
   (interactive)
-  (pow-with-current-app app
+  (pow-with-current-one-app app
     (pow-tail-log app)))
 
 ;;;###autoload
 (defun pow-tail-current-app-log (&optional app-log-kind)
   "Tail app log for current app, for monitoring purpose."
   (pow-interactive :app-log-kind)
-  (pow-with-current-app app
+  (pow-with-current-one-app app
     (pow-tail-app-log app app-log-kind)))
 
 (provide 'pow-tail-log)
