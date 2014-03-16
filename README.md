@@ -65,6 +65,8 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 ### Use with [`projectile-rails`](https://github.com/asok/projectile-rails)
 
 ```cl
+(setq projectile-rails-keymap-prefix (kbd "C-c ;")) ; I prefer rirari keybind
+(require 'projectile-rails)
 (require 'pow)
 (define-key projectile-rails-mode-map (kbd "C-c ; w") 'pow-restart-current-app)
 (define-key projectile-rails-mode-map (kbd "C-c ; o") 'pow-open-current-app)
