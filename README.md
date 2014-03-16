@@ -81,9 +81,10 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Check if all test passes (`make`) _make sure you are using emacs>=24 with `make emacs-version`_
-4. Commit your changes (`git commit -am 'Add some feature'`)
-5. Push to the branch (`git push origin my-new-feature`)
-6. Create new Pull Request
+3. Edit sources, add your features, or fix bugs.
+4. Check if all test passes (`make`) _make sure you are using emacs>=24 with `make emacs-version`_
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin my-new-feature`)
+7. Create new Pull Request
 
 **Bug reports, feature requests are also welcome! Please put on [issue](https://github.com/yukihr/emacs-pow/issues/new).**
