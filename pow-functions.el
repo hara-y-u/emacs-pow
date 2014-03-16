@@ -1,4 +1,4 @@
-;;; pow-interactive.el --- pow (http://pow.cx/) manager interactive functions
+;;; pow-functions.el --- pow (http://pow.cx/) manager functions
 
 ;; Copyright (c) 2014 yukihiro hara
 
@@ -167,5 +167,5 @@ and call `body' with project\'s `root-path'."
   (pow-interactive :new-app-name)
   (pow-with-current-app app (pow-rename-app app new-app-name)))
 
-(provide 'pow-interactive)
-;;; pow-interactive.el ends here
+(provide 'pow-functions)
+;;; pow-functions.el ends here

@@ -23,7 +23,7 @@
 
 ;;; Code:
 
-(require 'pow-interactive)
+(require 'pow-functions)
 (require 'pow-app-list)
 (require 'pow-tail-log)
 
