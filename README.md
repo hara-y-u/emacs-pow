@@ -25,13 +25,13 @@ Or, execute `M-x list-packages` and install `pow` should work too.
 
 ### From Raw Repository
 
-1. Clone to local
+1. Clone to local.
 
     ```
     git clone https://github.com/yukihr/emacs-pow.git
     ```
 
-2. Add following line to your init file
+2. Add following line to your init file and restart Emacs.
 
     ```
     (add-to-list 'load-path "path/to/emacs-pow")
@@ -76,7 +76,7 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 ### Use with [`projectile-rails`](https://github.com/asok/projectile-rails)
 
 ```cl
-(setq projectile-rails-keymap-prefix (kbd "C-c ;")) ; I prefer rirari keybind
+(setq projectile-rails-keymap-prefix (kbd "C-c ;")) ; I'm accustomed to rinari keybind
 (require 'projectile-rails)
 (require 'pow)
 (define-key projectile-rails-mode-map (kbd "C-c ; w") 'pow-restart-current-app)
