@@ -1,11 +1,11 @@
 ;;; pow.el --- pow (http://pow.cx/) manager for emacs
 
-;; Copyright (c) 2013  Free Software Foundation, Inc.
+;; Copyright (c) 2014 yukihiro hara
 
 ;; Author: yukihiro hara <yukihr@gmail.com>
 ;; URL: http://github.com/yukihr/emacs-pow
-;; Keywords: develop, web, pow
 ;; Version: 0.0.1
+;; Keywords: develop, web, pow
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
