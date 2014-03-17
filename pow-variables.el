@@ -76,4 +76,4 @@ Create same-name buffer-local variable to customize this.")
 
 
 (provide 'pow-variables)
-;;;pow-variables.el ends here
+;;; pow-variables.el ends here

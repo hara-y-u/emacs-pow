@@ -123,4 +123,4 @@ If buffer dosen't exist, create one and start process for it."
     (pow-tail-app-log app app-log-kind)))
 
 (provide 'pow-tail-log)
-;;;pow-tail-log.el ends here
+;;; pow-tail-log.el ends here
