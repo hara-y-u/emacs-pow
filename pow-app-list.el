@@ -91,7 +91,7 @@ Letters do not insert themselves; instead, they are commands.
        (user-error "The current buffer is not in Pow App List mode")))
     (ad-activate ',fn)))
 
-(defun pow-app-list-refresh ()
+(defun pow-app-list-refresh (&optional _num)
   "Refresh `pow-app-list-mode' buffer."
   (interactive)
   (funcall 'pow-app-list-view-reload pow-app-list--view)
