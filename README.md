@@ -9,7 +9,18 @@ Pow (http://pow.cx) apps management on emacs
 
 ### Package
 
-TODO
+#### Melpa
+
+Add following lines to your init file (like: `~/.emacs.d/init.el`), and restart Emacs. Just executing these expressions is also fine.
+
+```cl
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(unless (package-installed-p 'pow)
+  (package-install 'pow))
+```
+
+Or, execute `M-x list-packages` and install `pow` should work too.
 
 
 ### From Raw Repository
@@ -20,7 +31,7 @@ TODO
     git clone https://github.com/yukihr/emacs-pow.git
     ```
 
-2. Add following line to your init file (like: `~/.emacs.d/init.el`)
+2. Add following line to your init file
 
     ```
     (add-to-list 'load-path "path/to/emacs-pow")
