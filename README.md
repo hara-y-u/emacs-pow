@@ -20,7 +20,7 @@ If you haven't set up melpa, add following lines to your init file (like: `~/.em
 (package-initialize)
 ```
 
-And, execute `M-x list-packages` and install `pow`.
+After restart emacs (or after execute expressions), execute `M-x list-packages` and install `pow`.
 
 Below code snippet on your init file helps you to install `pow` automatically when its not installed.
 
