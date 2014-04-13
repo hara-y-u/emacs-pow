@@ -90,15 +90,6 @@
     (find-file
      (pow-app-app-log-path app app-log-kind))))
 
-(defmacro pow-with-rack-project-root (root-path &rest body)
-  "A macro verifies current-directory is in rack project,
-and call `body' with project\'s `root-path'."
-  (declare (indent 1))
-  `(let ((,root-path (pow-rack-project-root-for-dir default-directory)))
-     (if ,root-path
-         (progn ,@body)
-       (pow-user-error "Not in rack project"))))
-
 ;;;###autoload
 (defun pow-register-current-app (&optional name)
   "Register current project as an pow app."

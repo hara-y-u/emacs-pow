@@ -69,6 +69,15 @@
              pow-interactive-strategies
              :initial-value nil))))
 
+(defmacro pow-with-rack-project-root (root-path &rest body)
+  "A macro verifies current-directory is in rack project,
+and call `body' with project\'s `root-path'."
+  (declare (indent 1))
+  `(let ((,root-path (pow-rack-project-root-for-dir default-directory)))
+     (if ,root-path
+         (progn ,@body)
+       (pow-user-error "Not in rack project"))))
+
 (defmacro pow-with-message-error (message-on-success &rest body)
   "A macro translates errors to error message for interactive fns."
   (declare (indent 1))
