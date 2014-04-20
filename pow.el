@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'pow-functions)
+(require 'pow-commands)
 (require 'pow-app-list)
 (require 'pow-tail-log)
 
