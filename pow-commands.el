@@ -1,4 +1,4 @@
-;;; pow-functions.el --- pow (http://pow.cx/) manager functions
+;;; pow-commands.el --- pow (http://pow.cx/) manager functions
 
 ;; Copyright (c) 2014 yukihiro hara
 
@@ -160,5 +160,5 @@
   (pow-interactive :new-app-name)
   (pow-with-current-app app (pow-rename-app app new-app-name)))
 
-(provide 'pow-functions)
-;;; pow-functions.el ends here
+(provide 'pow-commands)
+;;; pow-commands.el ends here
