@@ -99,14 +99,14 @@ If buffer dosen't exist, create one and start process for it."
 (defun pow-tail-log (&optional name-or-app)
   "Tail log for `name-or-app', for monitoring purpose."
   (pow-interactive :app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (pow-tail-log-start app (pow-app-log-path app))))
 
 ;;;###autoload
 (defun pow-tail-app-log (&optional name-or-app app-log-kind)
   "Tail app log for `name-or-app', for monitoring purpose."
   (pow-interactive :app-name :app-log-kind)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (pow-tail-log-start app
      (pow-app-app-log-path app app-log-kind))))
 

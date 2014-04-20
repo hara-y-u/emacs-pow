@@ -44,21 +44,21 @@
 (defun pow-unregister-app (&optional name-or-app)
   "Unregister app specified by `name-or-app'."
   (pow-interactive :app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (pow-app-delete app)))
 
 ;;;###autoload
 (defun pow-open-app (&optional name-or-app)
   "Open app specified by `name-or-app'."
   (pow-interactive :app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (pow-app-open app)))
 
 ;;;###autoload
 (defun pow-copy-url-for-remote (&optional name-or-app)
   "Copy remote accessible url to clipboard."
   (pow-interactive :app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (with-temp-buffer
       (insert (pow-app-url-for-remote app))
       (clipboard-kill-region (point-min) (point-max)))))
@@ -67,26 +67,26 @@
 (defun pow-restart-app (&optional name-or-app)
   "Restart app specified by `name-or-app'."
   (pow-interactive :app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (pow-app-restart app)))
 
 ;;;###autoload
 (defun pow-rename-app (&optional name-or-app new-app-name)
   "Rename app specified by `name-or-app' to `new-app-name'."
   (pow-interactive :app-name :new-app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (pow-app-rename app new-app-name)))
 
 ;;;###autoload
 (defun pow-find-log (&optional name-or-app)
   (pow-interactive :app-name)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (find-file (pow-app-log-path app))))
 
 ;;;###autoload
 (defun pow-find-app-log (&optional name-or-app app-log-kind)
   (pow-interactive :app-name :app-log-kind)
-  (pow--with-name-or-app name-or-app app
+  (pow-with-name-or-app name-or-app app
     (find-file
      (pow-app-app-log-path app app-log-kind))))
 

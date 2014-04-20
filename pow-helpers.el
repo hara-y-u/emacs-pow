@@ -96,7 +96,7 @@ Device specified by `pow-default-network-device' will used."
 ;; Macros
 ;;
 
-(defmacro pow--with-name-or-app (name-or-app app &rest body)
+(defmacro pow-with-name-or-app (name-or-app app &rest body)
   "An macro receives `name-or-app' arg and call `body' certainly with `app'."
   (declare (indent 2))
   `(let (,app name)
