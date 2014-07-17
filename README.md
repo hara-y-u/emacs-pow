@@ -63,7 +63,7 @@ For other command reference, try exec `M-x apropos-command RET pow-`.
 
 ## Listing Apps
 
-`M-x list-pow-apps` lists all registered apps on pow. You can use following commands on each items in listing buffer.
+`M-x list-pow-apps` lists all apps registered to pow. You can use following commands on each items in listing buffer.
 
 | Action               | Command Name                   | Keybind                        |
 |----------------------|--------------------------------|--------------------------------|
