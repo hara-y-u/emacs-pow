@@ -1,6 +1,6 @@
 # emacs-pow
 
-Pow (http://pow.cx) apps management on emacs
+Pow (http://pow.cx) apps management on Emacs. It's [powder](https://github.com/Rodreegez/powder)(Comman Line) or [Anvil](https://github.com/Rodreegez/powder)(GUI) for Emacs.
 
 
 ## Install
