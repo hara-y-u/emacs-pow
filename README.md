@@ -1,6 +1,6 @@
 # emacs-pow
 
-Pow (http://pow.cx) apps management on Emacs. It's [powder](https://github.com/Rodreegez/powder)(Comman Line) or [Anvil](https://github.com/Rodreegez/powder)(GUI) for Emacs.
+Pow (http://pow.cx) apps management on Emacs. It's [powder](https://github.com/Rodreegez/powder)(Command Line) or [Anvil](http://anvilformac.com)(GUI) for Emacs.
 
 
 ## Install
@@ -37,7 +37,7 @@ Below code snippet on your init file helps you to install `emacs-pow` automatica
     git clone https://github.com/yukihr/emacs-pow.git
     ```
 
-2. Add following line to your init file and restart Emacs.
+2. Add following lines to your init file and restart Emacs.
 
     ```
     (add-to-list 'load-path "path/to/emacs-pow")
